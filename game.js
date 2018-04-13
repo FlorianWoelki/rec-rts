@@ -1,4 +1,5 @@
 window.onload = init;
+let units = [];
 
 let canvas = document.getElementById('canvas'),
     ctx = canvas.getContext('2d'),
@@ -13,6 +14,13 @@ function init() {
     canvas.addEventListener('mousedown', mouseDown, false);
     canvas.addEventListener('mouseup', mouseUp, false);
     canvas.addEventListener('mousemove', mouseMove, false);
+
+    window.onkeydown = function(e) {
+        if (e.keyCode === 32) { // If space is pressed
+            let unit = new Unit("Unit" + (units.length + 1));
+            units.push(unit);
+        }
+    }
 }
 
 function mouseDown(e) {
@@ -39,3 +47,22 @@ function draw() {
     ctx.setLineDash([6]);
     ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
 }
+
+let Unit = function(name) {
+    this.name = name;
+    this.health = 0;
+
+    this.getHealth();
+
+    this.getName();
+};
+
+Unit.prototype = {
+    getHealth: function() {
+        return this.health;
+    },
+
+    getName: function() {
+        return this.name;
+    }
+};
