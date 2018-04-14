@@ -101,17 +101,9 @@ var selectedX = 0;
 var selectedY = 0;
 
 function clickTile(xTile, yTile) {
-    if (xTile >= 0 && yTile >= 0 && xTile < mapWidth && yTile < mapHeight) {
+    if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
         var tile = getTile(xTile, yTile);
-        tile.land = !tile.land;
         tile.owned = !tile.owned;
-        /*if (level[xTile + yTile * mapWidth].owned) {
-            level[xTile + yTile * mapWidth].owned = false;
-            level[xTile + yTile * mapWidth].color = 0xff0000;
-        } else {
-            level[xTile + yTile * mapWidth].owned = true;
-            level[xTile + yTile * mapWidth].color = 0xffff00;
-        }*/
         recalcVisibility();
     }
 
@@ -212,7 +204,11 @@ function renderMap() {
     for (var y = y0; y < y1; y++) {
         for (var x = x0; x < x1; x++) {
             var tile = getTile(x, y);
-            if (tile.visible == 3) {
+            if (tile.visible == 1) {
+                map2d.drawImage(tileImage, 30 * 8, 2 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 0, 8, 8);
+                map2d.drawImage(tileImage, 30 * 8, 2 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 0, 8, 8);
+                map2d.drawImage(tileImage, 30 * 8, 2 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 8, 8, 8);
+                map2d.drawImage(tileImage, 30 * 8, 2 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 8, 8, 8);
             } else {
                 for (var i = 0; i < 4; i++) {
                     var xSide = (i % 2 * 2 - 1);
@@ -224,6 +220,7 @@ function renderMap() {
 
                     var xt = 1 + 32 - 5;
                     var yt = 1;
+                    if (tile.visible == 3) yt += 3;
 
                     if (t_u) yt += ySide;
                     if (t_l) xt += xSide;
@@ -237,11 +234,29 @@ function renderMap() {
             }
         }
     }
+    drawString("GOLD: 500", 4, 4 + 10 * 0);
+    drawString("FOOD: 0/100", 4, 4 + 10 * 1);
 }
 
 function getTile(x, y) {
     if (x < 0 || y < 0 || x >= mapWidth || y >= mapWidth) return level[0];
     else return level[x + y * mapWidth];
+}
+
+var tileCharacters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " +
+    "0123456789.,!?'\":;()+-=*/\\%     ";
+function drawString(string, x, y) {
+    string = string.toUpperCase();
+    var mapCanvas = document.getElementById("map");
+    var map2d = mapCanvas.getContext("2d");
+
+    for (var i = 0; i < string.length; i++) {
+        var index = tileCharacters.indexOf(string.charAt(i));
+        var xt = 0 + index % 32;
+        var yt = 29 + (index >> 5);
+        map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x + i * 8, y, 8, 8);
+    }
 }
 
 /*window.onload = init;
