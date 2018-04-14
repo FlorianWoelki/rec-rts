@@ -136,6 +136,7 @@ function revealTile(xTile, yTile, radius) {
             var xd = x - xTile;
             var yd = y - yTile;
             if (xd * xd + yd * yd <= radius * radius + 2) {
+                if (y === 0 || x === 0 || x === mapWidth - 1 || y === mapHeight - 1) continue;
                 level[x + y * mapWidth].visible = 3;
             }
         }
