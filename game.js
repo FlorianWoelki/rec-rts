@@ -6,10 +6,10 @@ window.onload = function () {
 window.onresize = init;
 
 var mouseDown = false;
-var scrolling = false;
+//var scrolling = false;
 
-var mouseDownX = 0;
-var mouseDownY = 0;
+//var mouseDownX = 0;
+//var mouseDownY = 0;
 
 var scrollX = 0;
 var scrollY = 0;
@@ -47,6 +47,9 @@ function loadImage(path) {
     return result;
 }
 
+var speed = 2;
+var keys = [];
+
 function init() {
     if (!pageLoaded || imagesToLoad > 0) return;
 
@@ -54,29 +57,37 @@ function init() {
     mapCanvas.width = (window.innerWidth);
     mapCanvas.height = (window.innerHeight);
 
-    mapCanvas.onmousedown = function (event) {
+    window.onkeydown = function (event) {
+        keys[event.keyCode] = true;
+    };
+
+    window.onkeyup = function (event) {
+        keys[event.keyCode] = false;
+    };
+
+    /*mapCanvas.onmousedown = function (event) {
         event.preventDefault();
         mouseDown = true;
         scrolling = false;
         mouseDownX = event.clientX;
         mouseDownY = event.clientY;
-    };
+    };*/
 
     window.onmouseup = function (event) {
         event.preventDefault();
         mouseDown = false;
-        if (!scrolling) {
-            var mapCanvas = document.getElementById("map");
-            var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
-            var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
+        //if (!scrolling) {
+        var mapCanvas = document.getElementById("map");
+        var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
+        var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
 
-            var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
-            var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
-            clickTile(xTile, yTile);
-        }
+        var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
+        var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
+        clickTile(xTile, yTile);
+        //}
     };
 
-    window.onmousemove = function (event) {
+    /*window.onmousemove = function (event) {
         if (!mouseDown) return;
         event.preventDefault();
         var distX = event.clientX - mouseDownX;
@@ -92,8 +103,9 @@ function init() {
             mouseDownY = event.clientY;
             renderMap();
         }
-    };
+    };*/
 
+    update();
     renderMap();
 }
 
@@ -140,6 +152,24 @@ function revealTile(xTile, yTile, radius) {
                 level[x + y * mapWidth].visible = 3;
             }
         }
+    }
+}
+
+function update() {
+    requestAnimationFrame(update);
+
+    if (keys[87]) { // w
+        scrollY += 3;
+        renderMap();
+    } else if (keys[65]) { // a
+        scrollX += 3;
+        renderMap();
+    } else if (keys[83]) { // s
+        scrollY -= 3;
+        renderMap();
+    } else if (keys[68]) { // d
+        scrollX -= 3;
+        renderMap();
     }
 }
 
@@ -247,6 +277,7 @@ function getTile(x, y) {
 var tileCharacters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " +
     "0123456789.,!?'\":;()+-=*/\\%     ";
+
 function drawString(string, x, y) {
     string = string.toUpperCase();
     var mapCanvas = document.getElementById("map");
