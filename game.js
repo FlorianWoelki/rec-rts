@@ -1,4 +1,8 @@
-window.onload = init;
+var pageLoaded = false;
+window.onload = function () {
+    pageLoaded = true;
+    init();
+};
 window.onresize = init;
 
 var mouseDown = false;
@@ -10,10 +14,13 @@ var mouseDownY = 0;
 var scrollX = 0;
 var scrollY = 0;
 var tileSize = 16;
-var zoom = 2;
+var zoom = 3;
 
 var mapWidth = 32;
 var mapHeight = 32;
+
+var tileImage = loadImage("spritesheet.png");
+var imagesToLoad = 0;
 
 var level = new Array(mapWidth * mapHeight);
 for (var y = 0; y < mapHeight; y++) {
@@ -22,17 +29,32 @@ for (var y = 0; y < mapHeight; y++) {
             color: 0xff00ff,
             visible: false,
             owned: false,
-            land: Math.random() < 0.5
+            land: 2 - Math.floor(Math.random() * Math.random() * 3)
         }
     }
 }
 
-function init() {
-    var mapCanvas = document.getElementById("map");
-    mapCanvas.width = (window.innerWidth) / zoom;
-    mapCanvas.height = (window.innerHeight - 128) / zoom;
+function loadImage(path) {
+    var result = new Image;
+    imagesToLoad++;
+    result.onload = function () {
+        imagesToLoad--;
+        if (imagesToLoad === 0) {
+            init();
+        }
+    };
+    result.src = path;
+    return result;
+}
 
-    mapCanvas.onmousedown = function(event) {
+function init() {
+    if (!pageLoaded || imagesToLoad > 0) return;
+
+    var mapCanvas = document.getElementById("map");
+    mapCanvas.width = (window.innerWidth);
+    mapCanvas.height = (window.innerHeight);
+
+    mapCanvas.onmousedown = function (event) {
         event.preventDefault();
         mouseDown = true;
         scrolling = false;
@@ -40,13 +62,13 @@ function init() {
         mouseDownY = event.clientY;
     };
 
-    window.onmouseup = function(event) {
+    window.onmouseup = function (event) {
         event.preventDefault();
         mouseDown = false;
         if (!scrolling) {
             var mapCanvas = document.getElementById("map");
-            var xOffset = Math.floor(scrollX + (mapCanvas.width - mapWidth * tileSize) / 2);
-            var yOffset = Math.floor(scrollY + (mapCanvas.height - mapHeight * tileSize) / 2);
+            var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
+            var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
 
             var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
             var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
@@ -54,7 +76,7 @@ function init() {
         }
     };
 
-    window.onmousemove = function(event) {
+    window.onmousemove = function (event) {
         if (!mouseDown) return;
         event.preventDefault();
         var distX = event.clientX - mouseDownX;
@@ -82,6 +104,7 @@ function clickTile(xTile, yTile) {
     if (xTile >= 0 && yTile >= 0 && xTile < mapWidth && yTile < mapHeight) {
         var tile = getTile(xTile, yTile);
         tile.land = !tile.land;
+        tile.owned = !tile.owned;
         /*if (level[xTile + yTile * mapWidth].owned) {
             level[xTile + yTile * mapWidth].owned = false;
             level[xTile + yTile * mapWidth].color = 0xff0000;
@@ -100,7 +123,7 @@ function clickTile(xTile, yTile) {
 function recalcVisibility() {
     for (var y = 0; y < mapHeight; y++) {
         for (var x = 0; x < mapWidth; x++) {
-            level[x + y * mapWidth].visible = false;
+            level[x + y * mapWidth].visible &= 1;
         }
     }
 
@@ -121,7 +144,7 @@ function revealTile(xTile, yTile, radius) {
             var xd = x - xTile;
             var yd = y - yTile;
             if (xd * xd + yd * yd <= radius * radius + 2) {
-                level[x + y * mapWidth].visible = true;
+                level[x + y * mapWidth].visible = 3;
             }
         }
     }
@@ -130,8 +153,12 @@ function revealTile(xTile, yTile, radius) {
 function renderMap() {
     var mapCanvas = document.getElementById("map");
 
-    var xOverflow = Math.max(0, (mapWidth + 4) * tileSize - mapCanvas.width) / 2;
-    var yOverflow = Math.max(0, (mapHeight + 4) * tileSize - mapCanvas.height) / 2;
+    var maxZoom = 300;
+    var aspectRation = 16 / 9;
+    zoom = Math.max(Math.floor(mapCanvas.height / maxZoom + 1), Math.floor(mapCanvas.width / (maxZoom * aspectRation) + 1));
+
+    var xOverflow = Math.max(0, (mapWidth + 4) * tileSize - mapCanvas.width / zoom) / 2;
+    var yOverflow = Math.max(0, (mapHeight + 4) * tileSize - mapCanvas.height / zoom) / 2;
 
     if (scrollX < -xOverflow) scrollX = -xOverflow;
     if (scrollY < -yOverflow) scrollY = -yOverflow;
@@ -139,28 +166,74 @@ function renderMap() {
     if (scrollY > yOverflow) scrollY = yOverflow;
 
     var map2d = mapCanvas.getContext("2d");
-    var xOffset = Math.floor(scrollX + (mapCanvas.width - mapWidth * tileSize) / 2);
-    var yOffset = Math.floor(scrollY + (mapCanvas.height - mapHeight * tileSize) / 2);
+    map2d.imageSmoothingEnabled = false;
+    map2d.webkitImageSmoothingEnabled = false;
+    map2d.mozImageSmoothingEnabled = false;
+    map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
+    var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
+    var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
     var x0 = Math.floor(-xOffset / tileSize);
     var y0 = Math.floor(-yOffset / tileSize);
-    var x1 = Math.ceil((-xOffset + mapCanvas.width) / tileSize);
-    var y1 = Math.ceil((-yOffset + mapCanvas.height) / tileSize);
+    var x1 = Math.ceil((-xOffset + mapCanvas.width / zoom) / tileSize);
+    var y1 = Math.ceil((-yOffset + mapCanvas.height / zoom) / tileSize);
 
     for (var y = y0; y < y1; y++) {
         for (var x = x0; x < x1; x++) {
             var tile = getTile(x, y);
-            if (tile.land) {
-                map2d.fillStyle = "#00ff00";
-                map2d.fillRect(x * tileSize + xOffset + 0, y * tileSize + yOffset + 0, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 8, y * tileSize + yOffset + 0, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 0, y * tileSize + yOffset + 8, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 8, y * tileSize + yOffset + 8, 8, 8);
+            if (tile.land == 0) {
+                map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 0, 8, 8);
+                map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 0, 8, 8);
+                map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 8, 8, 8);
+                map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 8, 8, 8);
             } else {
-                map2d.fillStyle = "#0000ff";
-                map2d.fillRect(x * tileSize + xOffset + 0, y * tileSize + yOffset + 0, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 8, y * tileSize + yOffset + 0, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 0, y * tileSize + yOffset + 8, 8, 8);
-                map2d.fillRect(x * tileSize + xOffset + 8, y * tileSize + yOffset + 8, 8, 8);
+                for (var i = 0; i < 4; i++) {
+                    var xSide = (i % 2 * 2 - 1);
+                    var ySide = ((i >> 1) * 2 - 1);
+
+                    var t_u = getTile(x, y + ySide).land !== tile.land;
+                    var t_l = getTile(x + xSide, y).land !== tile.land;
+                    var t_ul = getTile(x + xSide, y + ySide).land !== tile.land;
+
+                    var xt = 1;
+                    var yt = 1 + (tile.land - 1) * 3;
+
+                    if (t_u) yt += ySide;
+                    if (t_l) xt += xSide;
+                    if (!t_u && !t_l && t_ul) {
+                        xt += 3 - (i % 2);
+                        yt -= (i >> 1);
+                    }
+
+                    map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x * tileSize + xOffset + i % 2 * 8, y * tileSize + yOffset + (i >> 1) * 8, 8, 8);
+                }
+            }
+        }
+    }
+    for (var y = y0; y < y1; y++) {
+        for (var x = x0; x < x1; x++) {
+            var tile = getTile(x, y);
+            if (tile.visible == 3) {
+            } else {
+                for (var i = 0; i < 4; i++) {
+                    var xSide = (i % 2 * 2 - 1);
+                    var ySide = ((i >> 1) * 2 - 1);
+
+                    var t_u = getTile(x, y + ySide).visible !== tile.visible;
+                    var t_l = getTile(x + xSide, y).visible !== tile.visible;
+                    var t_ul = getTile(x + xSide, y + ySide).visible !== tile.visible;
+
+                    var xt = 1 + 32 - 5;
+                    var yt = 1;
+
+                    if (t_u) yt += ySide;
+                    if (t_l) xt += xSide;
+                    if (!t_u && !t_l && t_ul) {
+                        xt += 3 - (i % 2);
+                        yt -= (i >> 1);
+                    }
+
+                    map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x * tileSize + xOffset + i % 2 * 8, y * tileSize + yOffset + (i >> 1) * 8, 8, 8);
+                }
             }
         }
     }
