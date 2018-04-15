@@ -29,7 +29,6 @@ for (var y = 0; y < mapHeight; y++) {
             color: 0xff00ff,
             visible: false,
             owned: false,
-            base: false,
             land: 2 - Math.floor(Math.random() * Math.random() * 3)
         }
     }
@@ -117,7 +116,6 @@ function clickTile(xTile, yTile) {
     if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
         var tile = getTile(xTile, yTile);
         tile.owned = !tile.owned;
-        tile.base = !tile.base;
         recalcVisibility();
     }
 
@@ -208,9 +206,7 @@ function renderMap() {
     for (var y = y0; y < y1; y++) {
         for (var x = x0; x < x1; x++) {
             var tile = getTile(x, y);
-            if (tile.base) {
-                map2d.drawImage(tileImage, 0 * 8, 6 * 8, 8, 8, x * tileSize + xOffset, y * tileSize + yOffset, 16, 16);
-            } else if (tile.land == 0) {
+            if (tile.land == 0) {
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 0, 8, 8);
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 0, 8, 8);
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 8, 8, 8);
@@ -236,6 +232,10 @@ function renderMap() {
 
                     map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x * tileSize + xOffset + i % 2 * 8, y * tileSize + yOffset + (i >> 1) * 8, 8, 8);
                 }
+            }
+
+            if (tile.owned) {
+                map2d.drawImage(tileImage, 0 * 8, 6 * 8, 16, 16, x * tileSize + xOffset, y * tileSize + yOffset, 16, 16);
             }
         }
     }
