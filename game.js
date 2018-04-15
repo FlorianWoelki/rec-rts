@@ -29,6 +29,7 @@ for (var y = 0; y < mapHeight; y++) {
             color: 0xff00ff,
             visible: false,
             owned: false,
+            base: false,
             land: 2 - Math.floor(Math.random() * Math.random() * 3)
         }
     }
@@ -47,7 +48,7 @@ function loadImage(path) {
     return result;
 }
 
-var speed = 2;
+var scrollSpeed = 3;
 var keys = [];
 
 function init() {
@@ -116,6 +117,7 @@ function clickTile(xTile, yTile) {
     if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
         var tile = getTile(xTile, yTile);
         tile.owned = !tile.owned;
+        tile.base = !tile.base;
         recalcVisibility();
     }
 
@@ -159,16 +161,19 @@ function update() {
     requestAnimationFrame(update);
 
     if (keys[87]) { // w
-        scrollY += 3;
+        scrollY += scrollSpeed;
         renderMap();
-    } else if (keys[65]) { // a
-        scrollX += 3;
+    }
+    if (keys[65]) { // a
+        scrollX += scrollSpeed;
         renderMap();
-    } else if (keys[83]) { // s
-        scrollY -= 3;
+    }
+    if (keys[83]) { // s
+        scrollY -= scrollSpeed;
         renderMap();
-    } else if (keys[68]) { // d
-        scrollX -= 3;
+    }
+    if (keys[68]) { // d
+        scrollX -= scrollSpeed;
         renderMap();
     }
 }
@@ -203,7 +208,9 @@ function renderMap() {
     for (var y = y0; y < y1; y++) {
         for (var x = x0; x < x1; x++) {
             var tile = getTile(x, y);
-            if (tile.land == 0) {
+            if (tile.base) {
+                map2d.drawImage(tileImage, 0 * 8, 6 * 8, 8, 8, x * tileSize + xOffset, y * tileSize + yOffset, 16, 16);
+            } else if (tile.land == 0) {
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 0, 8, 8);
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 8), y * tileSize + yOffset + 0, 8, 8);
                 map2d.drawImage(tileImage, 5 * 8, 0 * 8, 8, 8, (x * tileSize + xOffset + 0), y * tileSize + yOffset + 8, 8, 8);
