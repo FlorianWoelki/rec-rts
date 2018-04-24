@@ -83,7 +83,7 @@ function init() {
     };*/
 	
 	document.getElementById("map").onclick = function() {
-		 mouseDown = false;
+	    mouseDown = false;
         //if (!scrolling) {
         var mapCanvas = document.getElementById("map");
         var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
