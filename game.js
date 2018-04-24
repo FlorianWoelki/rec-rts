@@ -22,6 +22,15 @@ var mapHeight = 32;
 var tileImage = loadImage("spritesheet.png");
 var imagesToLoad = 0;
 
+var cards = new Array(3);
+for (var i = 0; i < cards.length; i++) {
+	cards[i] = {
+		name: "Base",
+		imageX: 0,
+		imageY: 6
+	}
+}
+
 var level = new Array(mapWidth * mapHeight);
 for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
@@ -72,8 +81,20 @@ function init() {
         mouseDownX = event.clientX;
         mouseDownY = event.clientY;
     };*/
+	
+	document.getElementById("map").onclick = function() {
+		 mouseDown = false;
+        //if (!scrolling) {
+        var mapCanvas = document.getElementById("map");
+        var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
+        var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
 
-    window.onmouseup = function (event) {
+        var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
+        var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
+        clickTile(xTile, yTile);
+	};
+	
+    /*window.onmouseup = function (event) {
         event.preventDefault();
         mouseDown = false;
         //if (!scrolling) {
@@ -85,7 +106,7 @@ function init() {
         var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
         clickTile(xTile, yTile);
         //}
-    };
+    };*/
 
     /*window.onmousemove = function (event) {
         if (!mouseDown) return;
@@ -274,6 +295,14 @@ function renderMap() {
     }
     drawString("GOLD: 500", 4, 4 + 10 * 0);
     drawString("FOOD: 0/100", 4, 4 + 10 * 1);
+	
+	//draw cards
+	for (var i = 0; i < cards.length; i++) {
+		drawString(cards[i].name, 6, 34 + i * 22, 3);
+		drawCard(cards[i].imageX, cards[i].imageY, 4, 38 + i * 22);
+	}
+	//add dynamic height for inventory panel
+	document.getElementById("inventory-panel").style.height = (38 + (cards.length - 1) * 22) * 4;
 }
 
 function getTile(x, y) {
@@ -285,7 +314,7 @@ var tileCharacters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " +
     "0123456789.,!?'\":;()+-=*/\\%     ";
 
-function drawString(string, x, y) {
+function drawString(string, x, y, fontSize = 8) {
     string = string.toUpperCase();
     var mapCanvas = document.getElementById("map");
     var map2d = mapCanvas.getContext("2d");
@@ -294,8 +323,18 @@ function drawString(string, x, y) {
         var index = tileCharacters.indexOf(string.charAt(i));
         var xt = 0 + index % 32;
         var yt = 29 + (index >> 5);
-        map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x + i * 8, y, 8, 8);
+        map2d.drawImage(tileImage, xt * 8, yt * 8, 8, 8, x + i * fontSize, y, fontSize, fontSize);
     }
+}
+
+function drawCard(imageX, imageY, x, y) {
+	var mapCanvas = document.getElementById("map");
+    var map2d = mapCanvas.getContext("2d");
+
+	map2d.strokeStyle = "yellow";
+	map2d.rect(x, y, 16, 16);
+	map2d.stroke();
+	map2d.drawImage(tileImage, imageX * 8, imageY * 8, 16, 16, x, y, 16, 16);
 }
 
 /*window.onload = init;
