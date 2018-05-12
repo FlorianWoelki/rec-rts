@@ -302,7 +302,7 @@ function renderMap() {
 		drawCard(cards[i].imageX, cards[i].imageY, 4, 38 + i * 22);
 	}
 	//add dynamic height for inventory panel
-	document.getElementById("inventory-panel").style.height = (38 + (cards.length - 1) * 22) * 4;
+	document.getElementById("inventory-panel").style.height = cards.length * 115;
 }
 
 function getTile(x, y) {
