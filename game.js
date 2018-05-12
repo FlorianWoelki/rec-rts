@@ -6,10 +6,10 @@ window.onload = function () {
 window.onresize = init;
 
 var mouseDown = false;
-//var scrolling = false;
+var scrolling = false;
 
-//var mouseDownX = 0;
-//var mouseDownY = 0;
+var mouseDownX = 0;
+var mouseDownY = 0;
 
 var scrollX = 0;
 var scrollY = 0;
@@ -74,41 +74,28 @@ function init() {
         keys[event.keyCode] = false;
     };
 
-    /*mapCanvas.onmousedown = function (event) {
+    mapCanvas.onmousedown = function (event) {
         event.preventDefault();
         mouseDown = true;
         scrolling = false;
         mouseDownX = event.clientX;
         mouseDownY = event.clientY;
-    };*/
+    };
 	
 	document.getElementById("map").onclick = function() {
 	    mouseDown = false;
-        //if (!scrolling) {
-        var mapCanvas = document.getElementById("map");
-        var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
-        var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
+        if (!scrolling) {
+            var mapCanvas = document.getElementById("map");
+            var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
+            var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
 
-        var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
-        var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
-        clickTile(xTile, yTile);
+            var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
+            var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
+            clickTile(xTile, yTile);
+        }
 	};
-	
-    /*window.onmouseup = function (event) {
-        event.preventDefault();
-        mouseDown = false;
-        //if (!scrolling) {
-        var mapCanvas = document.getElementById("map");
-        var xOffset = Math.floor(scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2);
-        var yOffset = Math.floor(scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2);
 
-        var xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
-        var yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
-        clickTile(xTile, yTile);
-        //}
-    };*/
-
-    /*window.onmousemove = function (event) {
+    window.onmousemove = function (event) {
         if (!mouseDown) return;
         event.preventDefault();
         var distX = event.clientX - mouseDownX;
@@ -124,7 +111,7 @@ function init() {
             mouseDownY = event.clientY;
             renderMap();
         }
-    };*/
+    };
 
     update();
     renderMap();
@@ -179,7 +166,7 @@ function revealTile(xTile, yTile, radius) {
 function update() {
     requestAnimationFrame(update);
 
-    if (keys[87]) { // w
+    /*if (keys[87]) { // w
         scrollY += scrollSpeed;
         renderMap();
     }
@@ -194,7 +181,7 @@ function update() {
     if (keys[68]) { // d
         scrollX -= scrollSpeed;
         renderMap();
-    }
+    }*/
 }
 
 function renderMap() {
