@@ -1,4 +1,5 @@
 import './style.css';
+import spritesheet from '../assets/spritesheet.png';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -21,7 +22,7 @@ var zoom = 3;
 var mapWidth = 32;
 var mapHeight = 32;
 
-var tileImage = loadImage('../assets/spritesheet.png');
+var tileImage = loadImage(spritesheet);
 var imagesToLoad = 0;
 
 var cards = new Array(6);
