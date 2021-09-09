@@ -58,8 +58,8 @@ function loadImage(path: string) {
   return result;
 }
 
-var scrollSpeed = 3;
-var keys = [];
+//var scrollSpeed = 3;
+const keys = [];
 
 function init() {
   if (!pageLoaded || imagesToLoad > 0) return;
@@ -126,8 +126,8 @@ function init() {
   renderMap();
 }
 
-var selectedX = 0;
-var selectedY = 0;
+let selectedX = 0;
+let selectedY = 0;
 
 function clickTile(xTile: number, yTile: number) {
   if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
@@ -138,6 +138,7 @@ function clickTile(xTile: number, yTile: number) {
 
   selectedX = xTile;
   selectedY = yTile;
+  console.log(selectedX, selectedY);
   renderMap();
 }
 
