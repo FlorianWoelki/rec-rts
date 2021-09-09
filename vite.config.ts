@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/recrts/',
+  base: process.env.NODE_ENV === 'production' ? '/recrts/' : '/',
 });
