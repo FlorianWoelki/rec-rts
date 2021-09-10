@@ -316,7 +316,7 @@ function renderMap() {
   for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
-      if (tile.visible == 1) {
+      if (tile.visible === 1) {
         map2d.drawImage(
           tileImage,
           30 * 8,
@@ -370,16 +370,16 @@ function renderMap() {
           var t_l = getTile(x + xSide, y).visible !== tile.visible;
           var t_ul = getTile(x + xSide, y + ySide).visible !== tile.visible;
 
-          var xt = 1 + 32 - 5;
+          var xt = 32 - 7;
           var yt = 1;
           if (tile.visible == 3) yt += 3;
 
           if (t_u) yt += ySide;
           if (t_l) xt += xSide;
-          if (!t_u && !t_l && t_ul) {
+          /*if (!t_u && !t_l && t_ul) {
             xt += 3 - (i % 2);
             yt -= i >> 1;
-          }
+          }*/
 
           map2d.drawImage(
             tileImage,
