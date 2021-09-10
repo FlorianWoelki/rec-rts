@@ -1,5 +1,6 @@
 import './style.css';
 import spritesheet from '../assets/spritesheet.png';
+import { Keyboard } from './keyboard';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -24,6 +25,8 @@ var mapHeight = 32;
 
 var tileImage = loadImage(spritesheet);
 var imagesToLoad = 0;
+
+const keyboard = new Keyboard();
 
 var cards = new Array(6);
 for (let i = 0; i < cards.length; i++) {
@@ -59,23 +62,12 @@ function loadImage(path: string) {
   return result;
 }
 
-//var scrollSpeed = 3;
-const keys = [];
-
 function init() {
   if (!pageLoaded || imagesToLoad > 0) return;
 
   const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
   mapCanvas.width = window.innerWidth;
   mapCanvas.height = window.innerHeight;
-
-  window.onkeydown = function (event) {
-    keys[event.keyCode] = true;
-  };
-
-  window.onkeyup = function (event) {
-    keys[event.keyCode] = false;
-  };
 
   mapCanvas.onmousedown = function (event) {
     event.preventDefault();
@@ -101,6 +93,17 @@ function init() {
       clickTile(xTile, yTile);
     }
   };
+
+  var xOffset = Math.floor(
+    scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
+  );
+  var yOffset = Math.floor(
+    scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2,
+  );
+
+  var xTile = Math.floor((800 / zoom - xOffset) / tileSize);
+  var yTile = Math.floor((600 / zoom - yOffset) / tileSize);
+  clickTile(xTile, yTile);
 
   window.onmousemove = function (event) {
     if (!mouseDown) return;
@@ -175,26 +178,10 @@ function revealTile(xTile: number, yTile: number, radius: number) {
   }
 }
 
-function update() {
+const update = (): void => {
   requestAnimationFrame(update);
-
-  /*if (keys[87]) { // w
-        scrollY += scrollSpeed;
-        renderMap();
-    }
-    if (keys[65]) { // a
-        scrollX += scrollSpeed;
-        renderMap();
-    }
-    if (keys[83]) { // s
-        scrollY -= scrollSpeed;
-        renderMap();
-    }
-    if (keys[68]) { // d
-        scrollX -= scrollSpeed;
-        renderMap();
-    }*/
-}
+  keyboard.update(renderMap);
+};
 
 function renderMap() {
   const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
@@ -218,8 +205,6 @@ function renderMap() {
 
   const map2d = mapCanvas.getContext('2d')!;
   map2d.imageSmoothingEnabled = false;
-  //map2d.webkitImageSmoothingEnabled = false;
-  //map2d.mozImageSmoothingEnabled = false;
   map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
   var xOffset = Math.floor(
     scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
