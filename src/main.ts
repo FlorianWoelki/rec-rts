@@ -26,6 +26,8 @@ var mapHeight = 32;
 var tileImage = loadImage(spritesheet);
 var imagesToLoad = 0;
 
+const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
+const map2d = mapCanvas.getContext('2d')!;
 const keyboard = new Keyboard();
 
 var cards = new Array(6);
@@ -62,10 +64,9 @@ function loadImage(path: string) {
   return result;
 }
 
-function init() {
+async function init() {
   if (!pageLoaded || imagesToLoad > 0) return;
 
-  const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
   mapCanvas.width = window.innerWidth;
   mapCanvas.height = window.innerHeight;
 
@@ -80,7 +81,6 @@ function init() {
   mapCanvas.onclick = function (event) {
     mouseDown = false;
     if (!scrolling) {
-      const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
       var xOffset = Math.floor(
         scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
       );
@@ -122,12 +122,11 @@ function init() {
       scrollY += distY / zoom;
       mouseDownX = event.clientX;
       mouseDownY = event.clientY;
-      renderMap();
+      requestAnimationFrame(renderMap);
     }
   };
 
   update();
-  renderMap();
 }
 
 let selectedX = 0;
@@ -143,7 +142,7 @@ function clickTile(xTile: number, yTile: number) {
   selectedX = xTile;
   selectedY = yTile;
   console.log(selectedX, selectedY);
-  renderMap();
+  requestAnimationFrame(renderMap);
 }
 
 function recalcVisibility() {
@@ -184,8 +183,6 @@ const update = (): void => {
 };
 
 function renderMap() {
-  const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
-
   var maxZoom = 300;
   var aspectRation = 16 / 9;
   zoom = Math.max(
@@ -203,7 +200,6 @@ function renderMap() {
   if (scrollX > xOverflow) scrollX = xOverflow;
   if (scrollY > yOverflow) scrollY = yOverflow;
 
-  const map2d = mapCanvas.getContext('2d')!;
   map2d.imageSmoothingEnabled = false;
   map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
   var xOffset = Math.floor(
@@ -376,10 +372,6 @@ function renderMap() {
 
           if (t_u) yt += ySide;
           if (t_l) xt += xSide;
-          /*if (!t_u && !t_l && t_ul) {
-            xt += 3 - (i % 2);
-            yt -= i >> 1;
-          }*/
 
           map2d.drawImage(
             tileImage,
@@ -396,6 +388,7 @@ function renderMap() {
       }
     }
   }
+
   drawString('GOLD: 500', 4, 4 + 10 * 0);
   drawString('FOOD: 0/100', 4, 4 + 10 * 1);
 
@@ -409,9 +402,6 @@ function renderMap() {
 }
 
 function drawInventoryPanel() {
-  const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
-  const map2d = mapCanvas.getContext('2d')!;
-
   map2d.beginPath();
   map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
   map2d.fillRect(0, 30, 24, 24 * cards.length + 6);
@@ -428,8 +418,6 @@ var tileCharacters =
 
 function drawString(string: string, x: number, y: number, fontSize = 8) {
   string = string.toUpperCase();
-  const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
-  const map2d = mapCanvas.getContext('2d')!;
 
   for (var i = 0; i < string.length; i++) {
     var index = tileCharacters.indexOf(string.charAt(i));
@@ -450,9 +438,6 @@ function drawString(string: string, x: number, y: number, fontSize = 8) {
 }
 
 function drawCard(imageX: number, imageY: number, x: number, y: number): void {
-  const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
-  const map2d = mapCanvas.getContext('2d')!;
-
   map2d.beginPath();
   map2d.strokeStyle = 'yellow';
   map2d.rect(x, y, 16, 16);
