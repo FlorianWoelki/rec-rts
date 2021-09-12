@@ -256,7 +256,10 @@ function renderMap() {
           8,
           8,
         );
-      } else if (tile.tileId === Tiles.grass.id) {
+      } else if (
+        tile.tileId === Tiles.grass.id ||
+        tile.tileId === Tiles.tree.id
+      ) {
         for (var i = 0; i < 4; i++) {
           var xSide = (i % 2) * 2 - 1;
           var ySide = (i >> 1) * 2 - 1;
@@ -283,6 +286,53 @@ function renderMap() {
             8,
             x * tileSize + xOffset + (i % 2) * 8,
             y * tileSize + yOffset + (i >> 1) * 8,
+            8,
+            8,
+          );
+        }
+
+        if (tile.tileId === Tiles.tree.id) {
+          map2d.drawImage(
+            tileImage,
+            2 * 8,
+            6 * 8,
+            8,
+            8,
+            x * tileSize + xOffset + 0,
+            y * tileSize + yOffset + 0,
+            8,
+            8,
+          );
+          map2d.drawImage(
+            tileImage,
+            3 * 8,
+            6 * 8,
+            8,
+            8,
+            x * tileSize + xOffset + 8,
+            y * tileSize + yOffset + 0,
+            8,
+            8,
+          );
+          map2d.drawImage(
+            tileImage,
+            2 * 8,
+            7 * 8,
+            8,
+            8,
+            x * tileSize + xOffset + 0,
+            y * tileSize + yOffset + 8,
+            8,
+            8,
+          );
+          map2d.drawImage(
+            tileImage,
+            3 * 8,
+            7 * 8,
+            8,
+            8,
+            x * tileSize + xOffset + 8,
+            y * tileSize + yOffset + 8,
             8,
             8,
           );
@@ -338,7 +388,7 @@ function renderMap() {
   }
 
   // drawing hidden tiles
-  for (var y = y0; y < y1; y++) {
+  /*for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
       if (tile.visible === 1) {
@@ -416,7 +466,7 @@ function renderMap() {
         }
       }
     }
-  }
+  }*/
 
   drawString('GOLD: 500', 4, 4 + 10 * 0);
   drawString('FOOD: 0/100', 4, 4 + 10 * 1);

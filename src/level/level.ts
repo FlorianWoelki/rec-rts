@@ -1,7 +1,9 @@
 import { createAndValidateWorld } from './generator/level-generator';
 import { Grass } from './tile/grass';
 import { Sand } from './tile/sand';
+import { Tree } from './tile/tree';
 import { Water } from './tile/water';
+
 interface LevelTile {
   visible: number;
   owned: boolean;
@@ -12,6 +14,7 @@ export const Tiles = {
   water: new Water(0),
   grass: new Grass(1),
   sand: new Sand(2),
+  tree: new Tree(3),
 };
 
 export class Level {

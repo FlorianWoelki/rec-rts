@@ -144,5 +144,21 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
+  for (let i = 0; i < (w * h) / 400; i++) {
+    const x = Math.round(Math.random() * w);
+    const y = Math.round(Math.random() * h);
+    for (let j = 0; j < 200; j++) {
+      const xx =
+        x + Math.round(Math.random() * 15) - Math.round(Math.random() * 15);
+      const yy =
+        y + Math.round(Math.random() * 15) - Math.round(Math.random() * 15);
+      if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+        if (map[xx + yy * w] == Tiles.grass.id) {
+          map[xx + yy * w] = Tiles.tree.id;
+        }
+      }
+    }
+  }
+
   return [map, data];
 };
