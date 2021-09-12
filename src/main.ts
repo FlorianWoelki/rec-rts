@@ -1,7 +1,7 @@
 import './style.css';
 import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
-import { Level } from './level/level';
+import { Level, Tiles } from './level/level';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -21,8 +21,8 @@ let scrollY = 0;
 var tileSize = 16;
 var zoom = 3;
 
-var mapWidth = 128;
-var mapHeight = 128;
+const mapWidth = 128;
+const mapHeight = 128;
 
 var tileImage = loadImage(spritesheet);
 var imagesToLoad = 0;
@@ -173,6 +173,8 @@ function revealTile(xTile: number, yTile: number, radius: number) {
 const update = (): void => {
   requestAnimationFrame(update);
   keyboard.update(renderMap);
+  scrollX = keyboard.scrollX;
+  scrollY = keyboard.scrollY;
 };
 
 function renderMap() {
@@ -209,7 +211,7 @@ function renderMap() {
   for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
-      if (tile.tileId == 0) {
+      if (tile.tileId === Tiles.sand.id) {
         map2d.drawImage(
           tileImage,
           5 * 8,
@@ -254,6 +256,37 @@ function renderMap() {
           8,
           8,
         );
+      } else if (tile.tileId === Tiles.grass.id) {
+        for (var i = 0; i < 4; i++) {
+          var xSide = (i % 2) * 2 - 1;
+          var ySide = (i >> 1) * 2 - 1;
+
+          var t_u = getTile(x, y + ySide).tileId !== tile.tileId;
+          var t_l = getTile(x + xSide, y).tileId !== tile.tileId;
+          var t_ul = getTile(x + xSide, y + ySide).tileId !== tile.tileId;
+
+          var xt = 1;
+          var yt = 4;
+
+          if (t_u) yt += ySide;
+          if (t_l) xt += xSide;
+          if (!t_u && !t_l && t_ul) {
+            xt += 3 - (i % 2);
+            yt -= i >> 1;
+          }
+
+          map2d.drawImage(
+            tileImage,
+            xt * 8,
+            yt * 8,
+            8,
+            8,
+            x * tileSize + xOffset + (i % 2) * 8,
+            y * tileSize + yOffset + (i >> 1) * 8,
+            8,
+            8,
+          );
+        }
       } else {
         for (var i = 0; i < 4; i++) {
           var xSide = (i % 2) * 2 - 1;
@@ -264,7 +297,7 @@ function renderMap() {
           var t_ul = getTile(x + xSide, y + ySide).tileId !== tile.tileId;
 
           var xt = 1;
-          var yt = 1 + (tile.tileId - 1) * 3;
+          var yt = 1 + tile.tileId * 3;
 
           if (t_u) yt += ySide;
           if (t_l) xt += xSide;
@@ -287,6 +320,7 @@ function renderMap() {
         }
       }
 
+      // drawing base unit image
       if (tile.owned) {
         map2d.drawImage(
           tileImage,
@@ -302,7 +336,9 @@ function renderMap() {
       }
     }
   }
-  for (var y = y0; y < y1; y++) {
+
+  // drawing hidden tiles
+  /*for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
       if (tile.visible === 1) {
@@ -380,7 +416,7 @@ function renderMap() {
         }
       }
     }
-  }
+  }*/
 
   drawString('GOLD: 500', 4, 4 + 10 * 0);
   drawString('FOOD: 0/100', 4, 4 + 10 * 1);
