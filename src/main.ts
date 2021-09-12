@@ -120,8 +120,8 @@ async function init() {
   update();
 }
 
-let selectedX = 0;
-let selectedY = 0;
+//let selectedX = 0;
+//let selectedY = 0;
 
 function clickTile(xTile: number, yTile: number) {
   if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
@@ -130,8 +130,8 @@ function clickTile(xTile: number, yTile: number) {
     recalcVisibility();
   }
 
-  selectedX = xTile;
-  selectedY = yTile;
+  //selectedX = xTile;
+  //selectedY = yTile;
   requestAnimationFrame(renderMap);
 }
 
