@@ -1,3 +1,5 @@
+import { Tiles } from '../level';
+
 export class LevelGen {
   public w: number;
   public h: number;
@@ -111,9 +113,9 @@ export const createMap = (w: number, h: number) => {
       val = val + 1 - dist * 20;
 
       if (val < -0.5) {
-        map[i] = 0; // water
+        map[i] = Tiles.water.id;
       } else {
-        map[i] = 1; // grass
+        map[i] = Tiles.grass.id;
       }
     }
   }
@@ -133,7 +135,7 @@ export const createMap = (w: number, h: number) => {
           for (let xx = xo - 1; xx <= xo + 1; xx++) {
             if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
               if (map[xx + yy * w] == 1) {
-                map[xx + yy * w] = 2; //sand
+                map[xx + yy * w] = Tiles.sand.id;
               }
             }
           }

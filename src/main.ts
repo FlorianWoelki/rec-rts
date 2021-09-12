@@ -1,6 +1,7 @@
 import './style.css';
 import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
+import { Level } from './level/level';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -20,8 +21,8 @@ let scrollY = 0;
 var tileSize = 16;
 var zoom = 3;
 
-var mapWidth = 32;
-var mapHeight = 32;
+var mapWidth = 128;
+var mapHeight = 128;
 
 var tileImage = loadImage(spritesheet);
 var imagesToLoad = 0;
@@ -39,17 +40,7 @@ for (let i = 0; i < cards.length; i++) {
   };
 }
 
-var level = new Array(mapWidth * mapHeight);
-for (let y = 0; y < mapHeight; y++) {
-  for (let x = 0; x < mapWidth; x++) {
-    level[x + y * mapWidth] = {
-      color: 0xff00ff,
-      visible: false,
-      owned: false,
-      land: 2 - Math.floor(Math.random() * Math.random() * 3),
-    };
-  }
-}
+const level = new Level(mapWidth, mapHeight);
 
 function loadImage(path: string) {
   var result = new Image();
@@ -148,13 +139,15 @@ function clickTile(xTile: number, yTile: number) {
 function recalcVisibility() {
   for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
-      level[x + y * mapWidth].visible &= 1;
+      const tile = level.tiles[x + y * mapWidth];
+      tile.visible &= 1;
     }
   }
 
   for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
-      if (level[x + y * mapWidth].owned) {
+      const tile = level.tiles[x + y * mapWidth];
+      if (tile.owned) {
         revealTile(x, y, 4);
       }
     }
@@ -171,7 +164,7 @@ function revealTile(xTile: number, yTile: number, radius: number) {
       if (xd * xd + yd * yd <= radius * radius + 2) {
         if (y === 0 || x === 0 || x === mapWidth - 1 || y === mapHeight - 1)
           continue;
-        level[x + y * mapWidth].visible = 3;
+        level.tiles[x + y * mapWidth].visible = 3;
       }
     }
   }
@@ -216,7 +209,7 @@ function renderMap() {
   for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
-      if (tile.land == 0) {
+      if (tile.tileId == 0) {
         map2d.drawImage(
           tileImage,
           5 * 8,
@@ -266,12 +259,12 @@ function renderMap() {
           var xSide = (i % 2) * 2 - 1;
           var ySide = (i >> 1) * 2 - 1;
 
-          var t_u = getTile(x, y + ySide).land !== tile.land;
-          var t_l = getTile(x + xSide, y).land !== tile.land;
-          var t_ul = getTile(x + xSide, y + ySide).land !== tile.land;
+          var t_u = getTile(x, y + ySide).tileId !== tile.tileId;
+          var t_l = getTile(x + xSide, y).tileId !== tile.tileId;
+          var t_ul = getTile(x + xSide, y + ySide).tileId !== tile.tileId;
 
           var xt = 1;
-          var yt = 1 + (tile.land - 1) * 3;
+          var yt = 1 + (tile.tileId - 1) * 3;
 
           if (t_u) yt += ySide;
           if (t_l) xt += xSide;
@@ -409,8 +402,8 @@ function drawInventoryPanel() {
 }
 
 function getTile(x: number, y: number) {
-  if (x < 0 || y < 0 || x >= mapWidth || y >= mapWidth) return level[0];
-  else return level[x + y * mapWidth];
+  if (x < 0 || y < 0 || x >= mapWidth || y >= mapWidth) return level.tiles[0];
+  else return level.tiles[x + y * mapWidth];
 }
 
 var tileCharacters =
