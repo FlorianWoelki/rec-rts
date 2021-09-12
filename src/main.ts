@@ -132,7 +132,6 @@ function clickTile(xTile: number, yTile: number) {
 
   selectedX = xTile;
   selectedY = yTile;
-  console.log(selectedX, selectedY);
   requestAnimationFrame(renderMap);
 }
 
@@ -171,10 +170,11 @@ function revealTile(xTile: number, yTile: number, radius: number) {
 }
 
 const update = (): void => {
+  if (keyboard.scrollX !== 0) scrollX = keyboard.scrollX;
+  if (keyboard.scrollY !== 0) scrollY = keyboard.scrollY;
+
   requestAnimationFrame(update);
   keyboard.update(renderMap);
-  scrollX = keyboard.scrollX;
-  scrollY = keyboard.scrollY;
 };
 
 function renderMap() {
@@ -338,7 +338,7 @@ function renderMap() {
   }
 
   // drawing hidden tiles
-  /*for (var y = y0; y < y1; y++) {
+  for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
       var tile = getTile(x, y);
       if (tile.visible === 1) {
@@ -416,7 +416,7 @@ function renderMap() {
         }
       }
     }
-  }*/
+  }
 
   drawString('GOLD: 500', 4, 4 + 10 * 0);
   drawString('FOOD: 0/100', 4, 4 + 10 * 1);

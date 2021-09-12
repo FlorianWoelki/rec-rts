@@ -12,6 +12,8 @@ export class Keyboard {
 
     window.onkeyup = (event) => {
       this.keys[event.keyCode] = false;
+      this.scrollX = 0;
+      this.scrollY = 0;
     };
   }
 
