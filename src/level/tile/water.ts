@@ -23,21 +23,37 @@ export class Water extends Tile {
     if (!u && !l) {
       level.renderTile(map2d, 0, 0, x, y, xOffset, yOffset);
     } else {
-      level.renderTile(map2d, !l ? 0 : sx, !u ? 0 : sy, x, y, xOffset, yOffset);
+      if (u && l && !ul) {
+        level.renderTile(map2d, 4 * 8, 1 * 8, x, y, xOffset, yOffset);
+      } else {
+        level.renderTile(
+          map2d,
+          !l ? 0 : sx,
+          !u ? 0 : sy,
+          x,
+          y,
+          xOffset,
+          yOffset,
+        );
+      }
     }
 
     if (!u && !r) {
       level.renderTile(map2d, 2 * 8, 0, x, y, xOffset + 8, yOffset);
     } else {
-      level.renderTile(
-        map2d,
-        !r ? 2 * 8 : sx,
-        !u ? 0 : sy,
-        x,
-        y,
-        xOffset + 8,
-        yOffset,
-      );
+      if (u && r && !ur) {
+        level.renderTile(map2d, 3 * 8, 1 * 8, x, y, xOffset + 8, yOffset);
+      } else {
+        level.renderTile(
+          map2d,
+          !r ? 2 * 8 : sx,
+          !u ? 0 : sy,
+          x,
+          y,
+          xOffset + 8,
+          yOffset,
+        );
+      }
     }
 
     if (!d && !l) {
@@ -74,14 +90,6 @@ export class Water extends Tile {
 
     if (u && !r && ur) {
       level.renderTile(map2d, 3 * 8, 0, x, y, xOffset + 8, yOffset - 8);
-    }
-
-    if (u && l && !ul) {
-      level.renderTile(map2d, 4 * 8, 1 * 8, x, y, xOffset, yOffset);
-    }
-
-    if (u && r && !ur) {
-      level.renderTile(map2d, 3 * 8, 1 * 8, x, y, xOffset + 8, yOffset);
     }
   }
 }
