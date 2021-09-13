@@ -1,7 +1,7 @@
 import './style.css';
 import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
-import { Level, Tiles } from './level/level';
+import { Level } from './level/level';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -125,8 +125,8 @@ async function init() {
 
 function clickTile(xTile: number, yTile: number) {
   if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
-    var tile = getTile(xTile, yTile);
-    tile.owned = !tile.owned;
+    var tile = level.getTile(xTile, yTile);
+    tile.isOwned = !tile.isOwned;
     recalcVisibility();
   }
 
@@ -138,15 +138,15 @@ function clickTile(xTile: number, yTile: number) {
 function recalcVisibility() {
   for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
-      const tile = level.tiles[x + y * mapWidth];
+      const tile = level.getTile(x, y);
       tile.visible &= 1;
     }
   }
 
   for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
-      const tile = level.tiles[x + y * mapWidth];
-      if (tile.owned) {
+      const tile = level.getTile(x, y);
+      if (tile.isOwned) {
         revealTile(x, y, 4);
       }
     }
@@ -163,7 +163,8 @@ function revealTile(xTile: number, yTile: number, radius: number) {
       if (xd * xd + yd * yd <= radius * radius + 2) {
         if (y === 0 || x === 0 || x === mapWidth - 1 || y === mapHeight - 1)
           continue;
-        level.tiles[x + y * mapWidth].visible = 3;
+        const tile = level.getTile(x, y);
+        tile.visible = 3;
       }
     }
   }
@@ -197,21 +198,23 @@ function renderMap() {
 
   map2d.imageSmoothingEnabled = false;
   map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
-  var xOffset = Math.floor(
+  const xOffset = Math.floor(
     scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
   );
-  var yOffset = Math.floor(
+  const yOffset = Math.floor(
     scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2,
   );
-  var x0 = Math.floor(-xOffset / tileSize);
+  /*var x0 = Math.floor(-xOffset / tileSize);
   var y0 = Math.floor(-yOffset / tileSize);
   var x1 = Math.ceil((-xOffset + mapCanvas.width / zoom) / tileSize);
-  var y1 = Math.ceil((-yOffset + mapCanvas.height / zoom) / tileSize);
+  var y1 = Math.ceil((-yOffset + mapCanvas.height / zoom) / tileSize);*/
 
-  for (var y = y0; y < y1; y++) {
+  level.render(mapCanvas, map2d, xOffset, yOffset, zoom);
+
+  /*for (var y = y0; y < y1; y++) {
     for (var x = x0; x < x1; x++) {
-      var tile = getTile(x, y);
-      if (tile.tileId === Tiles.sand.id) {
+      var tile = level.getTile(x, y);
+      if (tile.id === Tiles.sand.id) {
         map2d.drawImage(
           tileImage,
           5 * 8,
@@ -256,17 +259,18 @@ function renderMap() {
           8,
           8,
         );
-      } else if (
-        tile.tileId === Tiles.grass.id ||
-        tile.tileId === Tiles.tree.id
-      ) {
+      } else if (tile.id === Tiles.grass.id) {
         for (var i = 0; i < 4; i++) {
           var xSide = (i % 2) * 2 - 1;
           var ySide = (i >> 1) * 2 - 1;
 
-          var t_u = getTile(x, y + ySide).tileId !== tile.tileId;
-          var t_l = getTile(x + xSide, y).tileId !== tile.tileId;
-          var t_ul = getTile(x + xSide, y + ySide).tileId !== tile.tileId;
+          const tuTile = level.getTile(x, y + ySide);
+          const tlTile = level.getTile(x + xSide, y);
+          const tulTile = level.getTile(x + xSide, y + ySide);
+
+          var t_u = tuTile.id !== tile.id;
+          var t_l = tlTile.id !== tile.id;
+          var t_ul = tulTile.id !== tile.id;
 
           var xt = 1;
           var yt = 4;
@@ -290,64 +294,106 @@ function renderMap() {
             8,
           );
         }
-
-        if (tile.tileId === Tiles.tree.id) {
-          map2d.drawImage(
-            tileImage,
-            2 * 8,
-            6 * 8,
-            8,
-            8,
-            x * tileSize + xOffset + 0,
-            y * tileSize + yOffset + 0,
-            8,
-            8,
-          );
-          map2d.drawImage(
-            tileImage,
-            3 * 8,
-            6 * 8,
-            8,
-            8,
-            x * tileSize + xOffset + 8,
-            y * tileSize + yOffset + 0,
-            8,
-            8,
-          );
-          map2d.drawImage(
-            tileImage,
-            2 * 8,
-            7 * 8,
-            8,
-            8,
-            x * tileSize + xOffset + 0,
-            y * tileSize + yOffset + 8,
-            8,
-            8,
-          );
-          map2d.drawImage(
-            tileImage,
-            3 * 8,
-            7 * 8,
-            8,
-            8,
-            x * tileSize + xOffset + 8,
-            y * tileSize + yOffset + 8,
-            8,
-            8,
-          );
-        }
+      } else if (tile.id === Tiles.tree.id) {
+        map2d.drawImage(
+          tileImage,
+          5 * 8,
+          3 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 0,
+          y * tileSize + yOffset + 0,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          5 * 8,
+          3 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 8,
+          y * tileSize + yOffset + 0,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          5 * 8,
+          3 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 0,
+          y * tileSize + yOffset + 8,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          5 * 8,
+          3 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 8,
+          y * tileSize + yOffset + 8,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          2 * 8,
+          6 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 0,
+          y * tileSize + yOffset + 0,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          3 * 8,
+          6 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 8,
+          y * tileSize + yOffset + 0,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          2 * 8,
+          7 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 0,
+          y * tileSize + yOffset + 8,
+          8,
+          8,
+        );
+        map2d.drawImage(
+          tileImage,
+          3 * 8,
+          7 * 8,
+          8,
+          8,
+          x * tileSize + xOffset + 8,
+          y * tileSize + yOffset + 8,
+          8,
+          8,
+        );
       } else {
         for (var i = 0; i < 4; i++) {
           var xSide = (i % 2) * 2 - 1;
           var ySide = (i >> 1) * 2 - 1;
 
-          var t_u = getTile(x, y + ySide).tileId !== tile.tileId;
-          var t_l = getTile(x + xSide, y).tileId !== tile.tileId;
-          var t_ul = getTile(x + xSide, y + ySide).tileId !== tile.tileId;
+          var t_u = level.getTile(x, y + ySide).id !== tile.id;
+          var t_l = level.getTile(x + xSide, y).id !== tile.id;
+          var t_ul = level.getTile(x + xSide, y + ySide).id !== tile.id;
 
           var xt = 1;
-          var yt = 1 + tile.tileId * 3;
+          var yt = 1 + tile.id * 3;
 
           if (t_u) yt += ySide;
           if (t_l) xt += xSide;
@@ -371,7 +417,7 @@ function renderMap() {
       }
 
       // drawing base unit image
-      if (tile.owned) {
+      if (tile.isOwned) {
         map2d.drawImage(
           tileImage,
           0 * 8,
@@ -385,7 +431,7 @@ function renderMap() {
         );
       }
     }
-  }
+  }*/
 
   // drawing hidden tiles
   /*for (var y = y0; y < y1; y++) {
@@ -485,11 +531,6 @@ function drawInventoryPanel() {
   map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
   map2d.fillRect(0, 30, 24, 24 * cards.length + 6);
   map2d.stroke();
-}
-
-function getTile(x: number, y: number) {
-  if (x < 0 || y < 0 || x >= mapWidth || y >= mapWidth) return level.tiles[0];
-  else return level.tiles[x + y * mapWidth];
 }
 
 var tileCharacters =
