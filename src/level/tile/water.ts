@@ -12,39 +12,76 @@ export class Water extends Tile {
   ): void {
     const sx = 1 * 8;
     const sy = 1 * 8;
-    level.renderTile(map2d, sx, sy, x, y, xOffset, yOffset);
-    level.renderTile(map2d, sx, sy, x, y, xOffset + 8, yOffset);
-    level.renderTile(map2d, sx, sy, x, y, xOffset, yOffset + 8);
-    level.renderTile(map2d, sx, sy, x, y, xOffset + 8, yOffset + 8);
-    /*for (var i = 0; i < 4; i++) {
-          var xSide = (i % 2) * 2 - 1;
-          var ySide = (i >> 1) * 2 - 1;
 
-          var t_u = level.getTile(x, y + ySide).id !== tile.id;
-          var t_l = level.getTile(x + xSide, y).id !== tile.id;
-          var t_ul = level.getTile(x + xSide, y + ySide).id !== tile.id;
+    const u = level.getTile(x, y - 1).id === this.id;
+    const d = level.getTile(x, y + 1).id === this.id;
+    const l = level.getTile(x - 1, y).id === this.id;
+    const r = level.getTile(x + 1, y).id === this.id;
+    const ul = level.getTile(x - 1, y - 1).id === this.id;
+    const ur = level.getTile(x + 1, y - 1).id === this.id;
 
-          var xt = 1;
-          var yt = 1 + tile.id * 3;
+    if (!u && !l) {
+      level.renderTile(map2d, 0, 0, x, y, xOffset, yOffset);
+    } else {
+      level.renderTile(map2d, !l ? 0 : sx, !u ? 0 : sy, x, y, xOffset, yOffset);
+    }
 
-          if (t_u) yt += ySide;
-          if (t_l) xt += xSide;
-          if (!t_u && !t_l && t_ul) {
-            xt += 3 - (i % 2);
-            yt -= i >> 1;
-          }
+    if (!u && !r) {
+      level.renderTile(map2d, 2 * 8, 0, x, y, xOffset + 8, yOffset);
+    } else {
+      level.renderTile(
+        map2d,
+        !r ? 2 * 8 : sx,
+        !u ? 0 : sy,
+        x,
+        y,
+        xOffset + 8,
+        yOffset,
+      );
+    }
 
-          map2d.drawImage(
-            tileImage,
-            xt * 8,
-            yt * 8,
-            8,
-            8,
-            x * tileSize + xOffset + (i % 2) * 8,
-            y * tileSize + yOffset + (i >> 1) * 8,
-            8,
-            8,
-          );
-        }*/
+    if (!d && !l) {
+      level.renderTile(map2d, 0, 2 * 8, x, y, xOffset, yOffset + 8);
+    } else {
+      level.renderTile(
+        map2d,
+        !l ? 0 : sx,
+        !d ? 2 * 8 : sy,
+        x,
+        y,
+        xOffset,
+        yOffset + 8,
+      );
+    }
+
+    if (!d && !r) {
+      level.renderTile(map2d, 2 * 8, 2 * 8, x, y, xOffset + 8, yOffset + 8);
+    } else {
+      level.renderTile(
+        map2d,
+        !r ? 2 * 8 : sx,
+        !d ? 2 * 8 : sy,
+        x,
+        y,
+        xOffset + 8,
+        yOffset + 8,
+      );
+    }
+
+    if (u && !l && ul) {
+      level.renderTile(map2d, 4 * 8, 0, x, y, xOffset, yOffset - 8);
+    }
+
+    if (u && !r && ur) {
+      level.renderTile(map2d, 3 * 8, 0, x, y, xOffset + 8, yOffset - 8);
+    }
+
+    if (u && l && !ul) {
+      level.renderTile(map2d, 4 * 8, 1 * 8, x, y, xOffset, yOffset);
+    }
+
+    if (u && r && !ur) {
+      level.renderTile(map2d, 3 * 8, 1 * 8, x, y, xOffset + 8, yOffset);
+    }
   }
 }
