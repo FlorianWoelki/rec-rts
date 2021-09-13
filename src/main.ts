@@ -116,49 +116,12 @@ let selectedY = 0;
 function clickTile(xTile: number, yTile: number) {
   if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
     level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
-    recalcVisibility();
+    level.recalcVisibility();
   }
 
   selectedX = xTile;
   selectedY = yTile;
   requestAnimationFrame(render);
-}
-
-function recalcVisibility() {
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      let tileState = level.getTileState(x, y, TileStateMask.VISIBLE);
-      if (tileState === 3) {
-        tileState >>= 1;
-      }
-      level.setTileState(x, y, tileState, TileStateMask.VISIBLE);
-    }
-  }
-
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      const owned = level.getTileState(x, y, TileStateMask.OWNED);
-      if (owned) {
-        revealTile(x, y, 4);
-      }
-    }
-  }
-}
-
-function revealTile(xTile: number, yTile: number, radius: number) {
-  for (var y = yTile - radius; y <= yTile + radius; y++) {
-    if (y < 0 || y >= mapHeight) continue;
-    for (var x = xTile - radius; x <= xTile + radius; x++) {
-      if (x < 0 || x >= mapWidth) continue;
-      var xd = x - xTile;
-      var yd = y - yTile;
-      if (xd * xd + yd * yd <= radius * radius + 2) {
-        if (y === 0 || x === 0 || x === mapWidth - 1 || y === mapHeight - 1)
-          continue;
-        level.setTileState(x, y, 3, TileStateMask.VISIBLE);
-      }
-    }
-  }
 }
 
 const update = (): void => {

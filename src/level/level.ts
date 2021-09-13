@@ -235,4 +235,49 @@ export class Level {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return;
     this.tiles[x + y * this.width] = tile.id;
   }
+
+  public recalcVisibility(): void {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        let tileState = this.getTileState(x, y, TileStateMask.VISIBLE);
+        if (tileState === 3) {
+          tileState >>= 1;
+        }
+
+        this.setTileState(x, y, tileState, TileStateMask.VISIBLE);
+      }
+    }
+
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const owned = this.getTileState(x, y, TileStateMask.OWNED);
+        if (owned) {
+          this.revealTile(x, y, 4);
+        }
+      }
+    }
+  }
+
+  public revealTile(xx: number, yy: number, radius: number): void {
+    for (let y = yy - radius; y <= yy + radius; y++) {
+      if (y < 0 || y >= this.height) continue;
+      for (let x = xx - radius; x <= xx + radius; x++) {
+        if (x < 0 || x >= this.width) continue;
+        const xd = x - xx;
+        const yd = y - yy;
+        if (xd * xd + yd * yd <= radius * radius + 2) {
+          if (
+            y === 0 ||
+            x === 0 ||
+            x === this.width - 1 ||
+            y === this.height - 1
+          ) {
+            continue;
+          }
+
+          this.setTileState(x, y, 3, TileStateMask.VISIBLE);
+        }
+      }
+    }
+  }
 }
