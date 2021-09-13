@@ -12,31 +12,30 @@ export class Keyboard {
 
     window.onkeyup = (event) => {
       this.keys[event.keyCode] = false;
-      this.scrollX = 0;
-      this.scrollY = 0;
     };
   }
 
-  public update(callback: () => void): void {
+  public update(currX: number, currY: number) {
+    this.scrollX = currX;
+    this.scrollY = currY;
+
     // w
     if (this.keys[87]) {
       this.scrollY += this.scrollSpeed;
-      callback();
     }
     // a
     if (this.keys[65]) {
       this.scrollX += this.scrollSpeed;
-      callback();
     }
     // s
     if (this.keys[83]) {
       this.scrollY -= this.scrollSpeed;
-      callback();
     }
     // d
     if (this.keys[68]) {
       this.scrollX -= this.scrollSpeed;
-      callback();
     }
+
+    return [this.scrollX, this.scrollY];
   }
 }
