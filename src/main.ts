@@ -110,18 +110,27 @@ async function init() {
   render();
 }
 
-let selectedX = 0;
-let selectedY = 0;
+let selectedX = -1;
+let selectedY = -1;
+let shouldDrawSelection = false;
 
 function clickTile(xTile: number, yTile: number) {
-  if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
-    level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
-    level.recalcVisibility();
+  if (selectedX === xTile && selectedY === yTile) {
+    if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
+      level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
+      level.recalcVisibility();
+    }
+
+    selectedX = -1;
+    selectedY = -1;
+  } else {
+    selectedX = xTile;
+    selectedY = yTile;
+
+    const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
+    shouldDrawSelection = data === 3;
   }
 
-  selectedX = xTile;
-  selectedY = yTile;
-  console.log(selectedX, selectedY);
   requestAnimationFrame(render);
 }
 
@@ -135,7 +144,7 @@ const update = (): void => {
   }
 };
 
-function render() {
+const render = (): void => {
   var maxZoom = 300;
   var aspectRation = 16 / 9;
   zoom = Math.max(
@@ -174,7 +183,17 @@ function render() {
     drawString(cards[i].name, 6, 34 + i * 24, 3);
     drawCard(cards[i].imageX, cards[i].imageY, 4, 38 + i * 24);
   }
-}
+
+  if (shouldDrawSelection) {
+    map2d.strokeStyle = 'white';
+    map2d.strokeRect(
+      selectedX * 16 + xOffset,
+      selectedY * 16 + yOffset,
+      16,
+      16,
+    );
+  }
+};
 
 function drawInventoryPanel() {
   map2d.beginPath();
