@@ -8,7 +8,6 @@ window.onload = (): void => {
   pageLoaded = true;
   init();
 };
-window.onresize = init;
 
 let mouseDown = false;
 let scrolling = false;
@@ -24,14 +23,27 @@ let zoom = 3;
 const mapWidth = 128;
 const mapHeight = 128;
 
-var tileImage = loadImage(spritesheet);
-var imagesToLoad = 0;
+let imagesToLoad = 0;
+const loadImage = (path: string): HTMLImageElement => {
+  const result = new Image();
+  imagesToLoad++;
+  result.onload = (): void => {
+    imagesToLoad--;
+    if (imagesToLoad === 0) {
+      init();
+    }
+  };
+  result.src = path;
+  return result;
+};
+
+const tileImage = loadImage(spritesheet);
 
 const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
 const map2d = mapCanvas.getContext('2d')!;
 const keyboard = new Keyboard();
 
-var cards = new Array(6);
+const cards = new Array(6);
 for (let i = 0; i < cards.length; i++) {
   cards[i] = {
     name: 'Base',
@@ -42,26 +54,13 @@ for (let i = 0; i < cards.length; i++) {
 
 const level = new Level(mapWidth, mapHeight);
 
-function loadImage(path: string) {
-  var result = new Image();
-  imagesToLoad++;
-  result.onload = function () {
-    imagesToLoad--;
-    if (imagesToLoad === 0) {
-      init();
-    }
-  };
-  result.src = path;
-  return result;
-}
-
-async function init() {
+const init = (): void => {
   if (!pageLoaded || imagesToLoad > 0) return;
 
   mapCanvas.width = window.innerWidth;
   mapCanvas.height = window.innerHeight;
 
-  mapCanvas.onmousedown = function (event) {
+  mapCanvas.onmousedown = (event) => {
     event.preventDefault();
     mouseDown = true;
     scrolling = false;
@@ -85,7 +84,7 @@ async function init() {
     }
   };
 
-  window.onmousemove = function (event) {
+  window.onmousemove = (event) => {
     if (!mouseDown) return;
     event.preventDefault();
     var distX = event.clientX - mouseDownX;
@@ -108,13 +107,13 @@ async function init() {
 
   update();
   render();
-}
+};
 
 let selectedX = -1;
 let selectedY = -1;
 let shouldDrawSelection = false;
 
-function clickTile(xTile: number, yTile: number) {
+const clickTile = (xTile: number, yTile: number): void => {
   if (selectedX === xTile && selectedY === yTile) {
     if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
       level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
@@ -132,7 +131,7 @@ function clickTile(xTile: number, yTile: number) {
   }
 
   requestAnimationFrame(render);
-}
+};
 
 const update = (): void => {
   requestAnimationFrame(update);
@@ -195,17 +194,22 @@ const render = (): void => {
   }
 };
 
-function drawInventoryPanel() {
+const drawInventoryPanel = (): void => {
   map2d.beginPath();
   map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
   map2d.fillRect(0, 30, 24, 24 * cards.length + 6);
   map2d.stroke();
-}
+};
 
-var tileCharacters =
+const tileCharacters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZ      ' + '0123456789.,!?\'":;()+-=*/\\%     ';
 
-function drawString(string: string, x: number, y: number, fontSize = 8) {
+const drawString = (
+  string: string,
+  x: number,
+  y: number,
+  fontSize = 8,
+): void => {
   string = string.toUpperCase();
 
   for (var i = 0; i < string.length; i++) {
@@ -224,12 +228,17 @@ function drawString(string: string, x: number, y: number, fontSize = 8) {
       fontSize,
     );
   }
-}
+};
 
-function drawCard(imageX: number, imageY: number, x: number, y: number): void {
+const drawCard = (
+  imageX: number,
+  imageY: number,
+  x: number,
+  y: number,
+): void => {
   map2d.beginPath();
   map2d.strokeStyle = 'yellow';
   map2d.rect(x, y, 16, 16);
   map2d.stroke();
   map2d.drawImage(tileImage, imageX * 8, imageY * 8, 16, 16, x, y, 16, 16);
-}
+};
