@@ -89,4 +89,8 @@ export class Tree extends Tile {
     level.renderTile(map2d, sx, sy + 8, x, y, xOffset, yOffset + 8);
     level.renderTile(map2d, sx + 8, sy + 8, x, y, xOffset + 8, yOffset + 8);
   }
+
+  public getOutcome(): number {
+    return 3;
+  }
 }

@@ -112,6 +112,7 @@ const init = (): void => {
 let selectedX = -1;
 let selectedY = -1;
 let shouldDrawSelection = false;
+let shouldShowTileData = false;
 
 const clickTile = (xTile: number, yTile: number): void => {
   if (selectedX === xTile && selectedY === yTile) {
@@ -126,6 +127,9 @@ const clickTile = (xTile: number, yTile: number): void => {
     selectedX = xTile;
     selectedY = yTile;
     shouldDrawSelection = true;
+
+    const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
+    shouldShowTileData = data === 3;
   }
 
   requestAnimationFrame(render);
@@ -187,11 +191,21 @@ const render = (): void => {
   if (shouldDrawSelection) {
     map2d.strokeStyle = 'white';
     map2d.strokeRect(
-      selectedX * 16 + xOffset,
-      selectedY * 16 + yOffset,
-      16,
-      16,
+      selectedX * tileSize + xOffset,
+      selectedY * tileSize + yOffset,
+      tileSize,
+      tileSize,
     );
+
+    if (shouldShowTileData) {
+      const tile = level.getTile(selectedX, selectedY);
+      drawString(
+        `Outcome: ${tile.getOutcome()}`,
+        selectedX * tileSize + xOffset + 18,
+        selectedY * tileSize + yOffset + 6,
+        4,
+      );
+    }
   }
 };
 

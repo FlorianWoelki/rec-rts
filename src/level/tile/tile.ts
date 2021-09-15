@@ -15,4 +15,8 @@ export abstract class Tile {
     xOffset: number,
     yOffset: number,
   ): void;
+
+  public getOutcome(): number {
+    return 0;
+  }
 }
