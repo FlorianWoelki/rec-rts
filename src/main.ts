@@ -43,7 +43,7 @@ const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
 const map2d = mapCanvas.getContext('2d')!;
 const keyboard = new Keyboard();
 
-const cards = new Array(6);
+const cards = new Array(1);
 for (let i = 0; i < cards.length; i++) {
   cards[i] = {
     name: 'Base',
@@ -80,7 +80,7 @@ const init = (): void => {
 
       const xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
       const yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
-      clickTile(xTile, yTile);
+      clickTile(xTile, yTile, event.clientX / zoom, event.clientY / zoom);
     }
   };
 
@@ -114,7 +114,25 @@ let selectedY = -1;
 let shouldDrawSelection = false;
 let shouldShowTileData = false;
 
-const clickTile = (xTile: number, yTile: number): void => {
+const clickTile = (
+  xTile: number,
+  yTile: number,
+  screenX: number,
+  screenY: number,
+): void => {
+  const width = Math.floor(map2d.canvas.width / zoom);
+  const height = Math.floor(map2d.canvas.height / zoom);
+
+  // check if it is in range of our gui
+  if (
+    screenX >= 0 &&
+    screenX <= width &&
+    screenY >= height - 35 &&
+    screenY <= height
+  ) {
+    return;
+  }
+
   if (selectedX === xTile && selectedY === yTile) {
     if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
       level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
@@ -177,15 +195,18 @@ const render = (): void => {
 
   level.render(mapCanvas, map2d, xOffset, yOffset, zoom);
 
-  drawString('GOLD: 500', 4, 4 + 10 * 0);
-  drawString('FOOD: 0/100', 4, 4 + 10 * 1);
-
-  drawInventoryPanel();
+  //drawString('GOLD: 500', 4, 4 + 10 * 0);
+  //drawString('FOOD: 0/100', 4, 4 + 10 * 1);
 
   //draw cards
   for (var i = 0; i < cards.length; i++) {
-    drawString(cards[i].name, 6, 34 + i * 24, 3);
-    drawCard(cards[i].imageX, cards[i].imageY, 4, 38 + i * 24);
+    const width = Math.floor(map2d.canvas.width / zoom);
+    const height = Math.floor(map2d.canvas.height / zoom);
+
+    map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    map2d.fillRect(0, height - 35, width, height);
+    drawString(cards[i].name, width / 2 + 2, height - 25 - 5, 3);
+    drawCard(cards[i].imageX, cards[i].imageY, width / 2, height - 25);
   }
 
   if (shouldDrawSelection) {
@@ -207,13 +228,6 @@ const render = (): void => {
       );
     }
   }
-};
-
-const drawInventoryPanel = (): void => {
-  map2d.beginPath();
-  map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
-  map2d.fillRect(0, 30, 24, 24 * cards.length + 6);
-  map2d.stroke();
 };
 
 const tileCharacters =
