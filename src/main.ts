@@ -125,9 +125,7 @@ const clickTile = (xTile: number, yTile: number): void => {
   } else {
     selectedX = xTile;
     selectedY = yTile;
-
-    const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
-    shouldDrawSelection = data === 3;
+    shouldDrawSelection = true;
   }
 
   requestAnimationFrame(render);
@@ -135,7 +133,10 @@ const clickTile = (xTile: number, yTile: number): void => {
 
 const update = (): void => {
   requestAnimationFrame(update);
-  const scrollData = keyboard.update(scrollX, scrollY);
+  const scrollData = keyboard.update(scrollX, scrollY, () => {
+    shouldDrawSelection = false;
+    requestAnimationFrame(render);
+  });
   if (scrollX !== scrollData[0] || scrollY !== scrollData[1]) {
     scrollX = scrollData[0];
     scrollY = scrollData[1];

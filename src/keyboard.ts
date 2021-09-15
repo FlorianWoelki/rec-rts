@@ -15,7 +15,7 @@ export class Keyboard {
     };
   }
 
-  public update(currX: number, currY: number) {
+  public update(currX: number, currY: number, escapePressed?: () => void) {
     this.scrollX = currX;
     this.scrollY = currY;
 
@@ -34,6 +34,10 @@ export class Keyboard {
     // d
     if (this.keys[68]) {
       this.scrollX -= this.scrollSpeed;
+    }
+
+    if (this.keys[27] && escapePressed) {
+      escapePressed();
     }
 
     return [this.scrollX, this.scrollY];
