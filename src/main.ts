@@ -117,31 +117,25 @@ let shouldShowTileData = false;
 const clickTile = (
   xTile: number,
   yTile: number,
-  screenX: number,
-  screenY: number,
+  sx: number,
+  sy: number,
 ): void => {
   const width = Math.floor(map2d.canvas.width / zoom);
   const height = Math.floor(map2d.canvas.height / zoom);
 
   // check if it is in range of our gui
-  if (
-    screenX >= 0 &&
-    screenX <= width &&
-    screenY >= height - 35 &&
-    screenY <= height
-  ) {
+  if (sx >= 0 && sx <= width && sy >= height - 35 && sy <= height) {
+    checkClickCard(sx, sy);
     return;
   }
 
-  if (selectedX === xTile && selectedY === yTile) {
-    if (xTile > 0 && yTile > 0 && xTile < mapWidth && yTile < mapHeight) {
-      level.setTileState(xTile, yTile, 1, TileStateMask.OWNED);
-      level.recalcVisibility();
-    }
-
+  if (xTile < 0 || yTile < 0 || xTile > mapWidth || yTile > mapHeight) {
     selectedX = -1;
     selectedY = -1;
-  } else {
+    return;
+  }
+
+  if (selectedX !== xTile || selectedY !== yTile) {
     selectedX = xTile;
     selectedY = yTile;
     shouldDrawSelection = true;
@@ -256,6 +250,23 @@ const drawString = (
       fontSize,
       fontSize,
     );
+  }
+};
+
+const checkClickCard = (sx: number, sy: number): void => {
+  const width = Math.floor(map2d.canvas.width / zoom);
+  const height = Math.floor(map2d.canvas.height / zoom);
+
+  const cardX = width / 2;
+  const cardY = height - 25;
+
+  if (sx >= cardX && sx <= cardX + 16 && sy >= cardY && sy <= cardY + 16) {
+    level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
+    level.recalcVisibility();
+    requestAnimationFrame(render);
+
+    selectedX = -1;
+    selectedY = -1;
   }
 };
 
