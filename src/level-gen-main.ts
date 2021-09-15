@@ -11,39 +11,44 @@ const width = 128;
 const height = 128;
 const imageData = map2d.createImageData(width, height);
 
-const buffer = new Uint8ClampedArray(width * height * 4);
 const map = createAndValidateWorld(width, height)[0];
 
 for (let y = 0; y < height; y++) {
   for (let x = 0; x < width; x++) {
-    const i = (y * width + x) * 4;
+    const i = x + y * width;
+
     if (map[i] === Tiles.water.id) {
-      buffer[i] = 0;
-      buffer[i + 1] = 0;
-      buffer[i + 2] = 255;
-      buffer[i + 3] = 255;
+      imageData.data[i * 4] = 0;
+      imageData.data[i * 4 + 1] = 0;
+      imageData.data[i * 4 + 2] = 255;
+      imageData.data[i * 4 + 3] = 255;
     }
     if (map[i] === Tiles.grass.id) {
-      buffer[i] = 0;
-      buffer[i + 1] = 255;
-      buffer[i + 2] = 0;
-      buffer[i + 3] = 255;
+      imageData.data[i * 4] = 0;
+      imageData.data[i * 4 + 1] = 255;
+      imageData.data[i * 4 + 2] = 0;
+      imageData.data[i * 4 + 3] = 255;
     }
     if (map[i] === Tiles.sand.id) {
-      buffer[i] = 255;
-      buffer[i + 1] = 255;
-      buffer[i + 2] = 0;
-      buffer[i + 3] = 255;
+      imageData.data[i * 4] = 255;
+      imageData.data[i * 4 + 1] = 255;
+      imageData.data[i * 4 + 2] = 0;
+      imageData.data[i * 4 + 3] = 255;
     }
     if (map[i] === Tiles.tree.id) {
-      buffer[i] = 0;
-      buffer[i + 1] = 200;
-      buffer[i + 2] = 0;
-      buffer[i + 3] = 255;
+      imageData.data[i * 4] = 0;
+      imageData.data[i * 4 + 1] = 200;
+      imageData.data[i * 4 + 2] = 0;
+      imageData.data[i * 4 + 3] = 255;
+    }
+    if (map[i] === 999) {
+      imageData.data[i * 4] = 255;
+      imageData.data[i * 4 + 1] = 0;
+      imageData.data[i * 4 + 2] = 0;
+      imageData.data[i * 4 + 3] = 255;
     }
   }
 }
-imageData.data.set(buffer);
 
 const newCanvas = document.createElement('canvas');
 newCanvas.width = imageData.width;
@@ -51,6 +56,6 @@ newCanvas.height = imageData.height;
 
 newCanvas.getContext('2d')!.putImageData(imageData, 0, 0);
 
-const zoom = 8;
+const zoom = 6;
 map2d.scale(zoom, zoom);
 map2d.drawImage(newCanvas, 0, 0);

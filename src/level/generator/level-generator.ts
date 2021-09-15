@@ -160,5 +160,29 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
+  let sx = -1;
+  let sy = -1;
+  const radius = 1;
+  while (sx === -1 || sy === -1) {
+    sx = Math.round(Math.random() * w);
+    sy = Math.round(Math.random() * h);
+    outer: for (let y = sy - radius; y <= sy + radius; y++) {
+      for (let x = sx - radius; x <= sx + radius; x++) {
+        if (map[x + y * w] === Tiles.water.id) {
+          sx = -1;
+          sy = -1;
+          break outer;
+        }
+      }
+    }
+  }
+
+  for (let yy = sy - radius; yy <= sy + radius; yy++) {
+    for (let xx = sx - radius; xx <= sx + radius; xx++) {
+      map[sx + sy * w] = 999;
+    }
+  }
+
+  console.log(map);
   return [map, data];
 };

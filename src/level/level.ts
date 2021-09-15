@@ -15,7 +15,6 @@ export const Tiles = {
 
 export const TilesArray: Tile[] = Object.entries(Tiles).map(([, Tile]) => Tile);
 
-// 00 = owned,visible
 export enum TileStateMask {
   OWNED = 1 << 0,
   VISIBLE = 3 << 1,
