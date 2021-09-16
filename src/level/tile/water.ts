@@ -2,6 +2,11 @@ import { Level } from '../level';
 import { Tile } from './tile';
 
 export class Water extends Tile {
+  constructor(id: number) {
+    super(id);
+    this.isPassable = false;
+  }
+
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,

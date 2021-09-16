@@ -2,6 +2,12 @@ import { Level, Tiles } from '../level';
 import { Tile } from './tile';
 
 export class Tree extends Tile {
+  constructor(id: number) {
+    super(id);
+    this.isFarmable = true;
+    this.isPassable = false;
+  }
+
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,

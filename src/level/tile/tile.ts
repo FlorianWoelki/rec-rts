@@ -2,6 +2,8 @@ import { Level } from '../level';
 
 export abstract class Tile {
   public id: number;
+  public isFarmable: boolean = false;
+  public isPassable: boolean = true;
 
   constructor(id: number) {
     this.id = id;

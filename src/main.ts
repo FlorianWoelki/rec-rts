@@ -139,8 +139,18 @@ const clickTile = (
   const height = Math.floor(map2d.canvas.height / zoom);
 
   // check if it is in range of our gui
-  if (sx >= 0 && sx <= width && sy >= height - 35 && sy <= height) {
-    checkClickCard(sx, sy);
+  if (
+    sx >= 0 &&
+    sx <= width &&
+    sy >= height - 35 &&
+    sy <= height &&
+    selectedX &&
+    selectedY
+  ) {
+    const tile = level.getTile(selectedX, selectedY);
+    if (tile.isPassable) {
+      checkClickCard(sx, sy);
+    }
     return;
   }
 
