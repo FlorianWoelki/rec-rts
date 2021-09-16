@@ -17,6 +17,8 @@ let mouseDownY = 0;
 
 let scrollX = 0;
 let scrollY = 0;
+let startingX = 0;
+let startingY = 0;
 const tileSize = 16;
 let zoom = 3;
 
@@ -89,11 +91,10 @@ const init = (): void => {
       const i = x + y * mapWidth;
 
       if (level.tiles[i] === Tiles.startingPosition.id) {
-        scrollX = x;
-        scrollY = y;
+        startingX = x;
+        startingY = y;
 
-        clickTile(scrollX, scrollY, 800 / zoom, 600 / zoom);
-        level.setTileState(scrollX, scrollY, 1, TileStateMask.OWNED);
+        level.setTileState(startingX, startingY, 1, TileStateMask.OWNED);
         level.recalcVisibility();
       }
     }
@@ -183,23 +184,21 @@ const render = (): void => {
     Math.floor(mapCanvas.width / (maxZoom * aspectRation) + 1),
   );
 
-  const xOverflow =
-    Math.max(0, (mapWidth + 4) * tileSize - mapCanvas.width / zoom) / 2;
-  const yOverflow =
-    Math.max(0, (mapHeight + 4) * tileSize - mapCanvas.height / zoom) / 2;
-
-  if (scrollX < -xOverflow) scrollX = -xOverflow;
-  if (scrollY < -yOverflow) scrollY = -yOverflow;
-  if (scrollX > xOverflow) scrollX = xOverflow;
-  if (scrollY > yOverflow) scrollY = yOverflow;
+  if (scrollX > startingX * 16) scrollX = startingX * 16;
+  if (scrollY > startingY * 16) scrollY = startingY * 16;
+  if (scrollX < startingX * 16 - (mapWidth - 2) * tileSize)
+    scrollX = startingX * 16 - (mapWidth - 2) * tileSize;
+  if (scrollY < startingY * 16 - (mapHeight - 2) * tileSize)
+    scrollY = startingY * 16 - (mapHeight - 2) * tileSize;
 
   map2d.imageSmoothingEnabled = false;
   map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
+
   const xOffset = Math.floor(
-    scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
+    scrollX + -startingX * 16 + window.innerWidth / zoom / 2,
   );
   const yOffset = Math.floor(
-    scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2,
+    scrollY + -startingY * 16 + window.innerHeight / zoom / 2,
   );
 
   level.render(mapCanvas, map2d, xOffset, yOffset, zoom);
