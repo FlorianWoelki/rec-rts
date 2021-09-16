@@ -11,9 +11,10 @@ export const Tiles: Record<string, Tile> = {
   grass: new Grass(1),
   sand: new Sand(2),
   tree: new Tree(3),
+  startingPosition: new Grass(999),
 };
 
-const TilesArray: Tile[] = Object.entries(Tiles).map(([, tile]) => tile);
+const tilesIdArray = Object.entries(Tiles).map(([_, tile]) => tile);
 
 export enum TileStateMask {
   OWNED = 1 << 0,
@@ -21,8 +22,6 @@ export enum TileStateMask {
 }
 
 export class Level {
-  public static startingPositionId = 999;
-
   public tiles: number[];
   public tilesState: number[];
   public tileSize: number = 16;
@@ -42,7 +41,7 @@ export class Level {
     this.tileImage = this.loadImage(spritesheet);
   }
 
-  loadImage(path: string): HTMLImageElement {
+  private loadImage(path: string): HTMLImageElement {
     var result = new Image();
     this.imagesToLoad++;
     result.onload = (): void => {
@@ -98,7 +97,7 @@ export class Level {
     }
 
     // draw hide tiles
-    for (let y = y0; y < y1; y++) {
+    /*for (let y = y0; y < y1; y++) {
       for (let x = x0; x < x1; x++) {
         const tileState = this.getTileState(x, y, TileStateMask.VISIBLE);
         if (tileState === 1) {
@@ -179,7 +178,7 @@ export class Level {
           }
         }
       }
-    }
+    }*/
   }
 
   public renderTile(
@@ -207,7 +206,10 @@ export class Level {
   public getTile(x: number, y: number): Tile {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height)
       return Tiles.water;
-    return TilesArray[this.tiles[x + y * this.width]];
+    const foundTile = tilesIdArray.find(
+      (tile) => this.tiles[x + y * this.width] === tile.id,
+    );
+    return foundTile ?? Tiles.water;
   }
 
   public getTileState(x: number, y: number, mask: TileStateMask): number {

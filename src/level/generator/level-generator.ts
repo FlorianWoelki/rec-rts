@@ -1,4 +1,4 @@
-import { Level, Tiles } from '../level';
+import { Tiles } from '../level';
 
 export class LevelGen {
   public w: number;
@@ -180,8 +180,7 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
-  map[sx + sy * w] = Level.startingPositionId;
+  map[sx + sy * w] = Tiles.startingPosition.id;
 
-  console.log(map);
   return [map, data];
 };

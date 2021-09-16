@@ -1,7 +1,7 @@
 import './style.css';
 import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
-import { TileStateMask, Level } from './level/level';
+import { TileStateMask, Level, Tiles } from './level/level';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -20,8 +20,8 @@ let scrollY = 0;
 const tileSize = 16;
 let zoom = 3;
 
-const mapWidth = 128;
-const mapHeight = 128;
+const mapWidth = 32;
+const mapHeight = 32;
 
 let imagesToLoad = 0;
 const loadImage = (path: string): HTMLImageElement => {
@@ -83,6 +83,21 @@ const init = (): void => {
       clickTile(xTile, yTile, event.clientX / zoom, event.clientY / zoom);
     }
   };
+
+  for (let y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
+      const i = x + y * mapWidth;
+
+      if (level.tiles[i] === Tiles.startingPosition.id) {
+        scrollX = x;
+        scrollY = y;
+
+        clickTile(scrollX, scrollY, 800 / zoom, 600 / zoom);
+        level.setTileState(scrollX, scrollY, 1, TileStateMask.OWNED);
+        level.recalcVisibility();
+      }
+    }
+  }
 
   window.onmousemove = (event) => {
     if (!mouseDown) return;
@@ -161,16 +176,16 @@ const update = (): void => {
 };
 
 const render = (): void => {
-  var maxZoom = 300;
-  var aspectRation = 16 / 9;
+  const maxZoom = 300;
+  const aspectRation = 16 / 9;
   zoom = Math.max(
     Math.floor(mapCanvas.height / maxZoom + 1),
     Math.floor(mapCanvas.width / (maxZoom * aspectRation) + 1),
   );
 
-  var xOverflow =
+  const xOverflow =
     Math.max(0, (mapWidth + 4) * tileSize - mapCanvas.width / zoom) / 2;
-  var yOverflow =
+  const yOverflow =
     Math.max(0, (mapHeight + 4) * tileSize - mapCanvas.height / zoom) / 2;
 
   if (scrollX < -xOverflow) scrollX = -xOverflow;
@@ -188,9 +203,6 @@ const render = (): void => {
   );
 
   level.render(mapCanvas, map2d, xOffset, yOffset, zoom);
-
-  //drawString('GOLD: 500', 4, 4 + 10 * 0);
-  //drawString('FOOD: 0/100', 4, 4 + 10 * 1);
 
   //draw cards
   for (var i = 0; i < cards.length; i++) {
