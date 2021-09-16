@@ -41,7 +41,7 @@ for (let y = 0; y < height; y++) {
       imageData.data[i * 4 + 2] = 0;
       imageData.data[i * 4 + 3] = 255;
     }
-    if (map[i] === Tiles.startingPositionId.id) {
+    if (map[i] === Tiles.startingPosition.id) {
       imageData.data[i * 4] = 255;
       imageData.data[i * 4 + 1] = 0;
       imageData.data[i * 4 + 2] = 0;
