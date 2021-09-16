@@ -15,7 +15,12 @@ export class Keyboard {
     };
   }
 
-  public update(currX: number, currY: number, escapePressed?: () => void) {
+  public update(
+    currX: number,
+    currY: number,
+    escapePressed?: () => void,
+    debugPressed?: () => void,
+  ) {
     this.scrollX = currX;
     this.scrollY = currY;
 
@@ -38,6 +43,11 @@ export class Keyboard {
 
     if (this.keys[27] && escapePressed) {
       escapePressed();
+    }
+
+    // 1
+    if (this.keys[49] && debugPressed) {
+      debugPressed();
     }
 
     return [this.scrollX, this.scrollY];

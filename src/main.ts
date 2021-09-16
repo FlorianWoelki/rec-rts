@@ -22,8 +22,8 @@ let startingY = 0;
 const tileSize = 16;
 let zoom = 3;
 
-const mapWidth = 32;
-const mapHeight = 32;
+const mapWidth = 128;
+const mapHeight = 128;
 
 let imagesToLoad = 0;
 const loadImage = (path: string): HTMLImageElement => {
@@ -132,8 +132,8 @@ let shouldShowTileData = false;
 const clickTile = (
   xTile: number,
   yTile: number,
-  sx: number,
-  sy: number,
+  sx: number = 800,
+  sy: number = 600,
 ): void => {
   const width = Math.floor(map2d.canvas.width / zoom);
   const height = Math.floor(map2d.canvas.height / zoom);
@@ -180,9 +180,23 @@ const clickTile = (
 
 const update = (): void => {
   requestAnimationFrame(update);
-  const scrollData = keyboard.update(scrollX, scrollY, () => {
-    requestAnimationFrame(render);
-  });
+  const scrollData = keyboard.update(
+    scrollX,
+    scrollY,
+    () => {
+      requestAnimationFrame(render);
+    },
+    () => {
+      if (selectedX && selectedY) {
+        level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
+        level.recalcVisibility();
+        requestAnimationFrame(render);
+
+        selectedX = null;
+        selectedY = null;
+      }
+    },
+  );
   if (scrollX !== scrollData[0] || scrollY !== scrollData[1]) {
     scrollX = scrollData[0];
     scrollY = scrollData[1];
@@ -239,12 +253,31 @@ const render = (): void => {
 
     if (shouldShowTileData) {
       const tile = level.getTile(selectedX, selectedY);
-      if (tile.getOutcome() !== 0) {
-        drawString(
-          `Outcome: ${tile.getOutcome()}`,
+      const tileOutcome = tile.getOutcome();
+      if (tileOutcome) {
+        map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        map2d.fillRect(
+          selectedX * tileSize + xOffset + tileSize,
+          selectedY * tileSize + yOffset,
+          18,
+          16,
+        );
+        map2d.drawImage(
+          tileImage,
+          0,
+          8 * 8,
+          8,
+          8,
           selectedX * tileSize + xOffset + 18,
-          selectedY * tileSize + yOffset + 6,
-          4,
+          selectedY * tileSize + yOffset + 4,
+          8,
+          8,
+        );
+        drawString(
+          `${tileOutcome.amount}`,
+          selectedX * tileSize + xOffset + 27,
+          selectedY * tileSize + yOffset + 5,
+          5,
         );
       }
     }

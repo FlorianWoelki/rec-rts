@@ -1,5 +1,14 @@
 import { Level } from '../level';
 
+export enum TileOutcomeType {
+  WOOD,
+}
+
+export interface TileOutcome {
+  amount: number;
+  type: TileOutcomeType;
+}
+
 export abstract class Tile {
   public id: number;
   public isFarmable: boolean = false;
@@ -18,7 +27,7 @@ export abstract class Tile {
     yOffset: number,
   ): void;
 
-  public getOutcome(): number {
-    return 0;
+  public getOutcome(): TileOutcome | undefined {
+    return undefined;
   }
 }

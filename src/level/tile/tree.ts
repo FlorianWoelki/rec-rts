@@ -1,5 +1,5 @@
 import { Level, Tiles } from '../level';
-import { Tile } from './tile';
+import { Tile, TileOutcome, TileOutcomeType } from './tile';
 
 export class Tree extends Tile {
   constructor(id: number) {
@@ -96,7 +96,10 @@ export class Tree extends Tile {
     level.renderTile(map2d, sx + 8, sy + 8, x, y, xOffset + 8, yOffset + 8);
   }
 
-  public getOutcome(): number {
-    return 3;
+  public getOutcome(): TileOutcome {
+    return {
+      amount: 3,
+      type: TileOutcomeType.WOOD,
+    };
   }
 }
