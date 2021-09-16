@@ -6,14 +6,14 @@ import { Tile } from './tile/tile';
 import { Tree } from './tile/tree';
 import { Water } from './tile/water';
 
-export const Tiles = {
+export const Tiles: Record<string, Tile> = {
   water: new Water(0),
   grass: new Grass(1),
   sand: new Sand(2),
   tree: new Tree(3),
 };
 
-export const TilesArray: Tile[] = Object.entries(Tiles).map(([, Tile]) => Tile);
+const TilesArray: Tile[] = Object.entries(Tiles).map(([, tile]) => tile);
 
 export enum TileStateMask {
   OWNED = 1 << 0,
@@ -21,6 +21,8 @@ export enum TileStateMask {
 }
 
 export class Level {
+  public static startingPositionId = 999;
+
   public tiles: number[];
   public tilesState: number[];
   public tileSize: number = 16;

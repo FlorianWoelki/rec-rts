@@ -1,4 +1,4 @@
-import { Tiles } from '../level';
+import { Level, Tiles } from '../level';
 
 export class LevelGen {
   public w: number;
@@ -168,7 +168,10 @@ export const createMap = (w: number, h: number) => {
     sy = Math.round(Math.random() * h);
     outer: for (let y = sy - radius; y <= sy + radius; y++) {
       for (let x = sx - radius; x <= sx + radius; x++) {
-        if (map[x + y * w] === Tiles.water.id) {
+        if (
+          map[x + y * w] === Tiles.water.id ||
+          map[x + y * w] === Tiles.tree.id
+        ) {
           sx = -1;
           sy = -1;
           break outer;
@@ -177,11 +180,7 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
-  for (let yy = sy - radius; yy <= sy + radius; yy++) {
-    for (let xx = sx - radius; xx <= sx + radius; xx++) {
-      map[sx + sy * w] = 999;
-    }
-  }
+  map[sx + sy * w] = Level.startingPositionId;
 
   console.log(map);
   return [map, data];
