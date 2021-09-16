@@ -74,10 +74,10 @@ const init = (): void => {
     mouseDown = false;
     if (!scrolling) {
       const xOffset = Math.floor(
-        scrollX + (mapCanvas.width / zoom - mapWidth * tileSize) / 2,
+        scrollX + -startingX * 16 + window.innerWidth / zoom / 2,
       );
       const yOffset = Math.floor(
-        scrollY + (mapCanvas.height / zoom - mapHeight * tileSize) / 2,
+        scrollY + -startingY * 16 + window.innerHeight / zoom / 2,
       );
 
       const xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
@@ -184,12 +184,12 @@ const render = (): void => {
     Math.floor(mapCanvas.width / (maxZoom * aspectRation) + 1),
   );
 
-  if (scrollX > startingX * 16) scrollX = startingX * 16;
-  if (scrollY > startingY * 16) scrollY = startingY * 16;
-  if (scrollX < startingX * 16 - (mapWidth - 2) * tileSize)
-    scrollX = startingX * 16 - (mapWidth - 2) * tileSize;
-  if (scrollY < startingY * 16 - (mapHeight - 2) * tileSize)
-    scrollY = startingY * 16 - (mapHeight - 2) * tileSize;
+  if (scrollX > startingX * tileSize) scrollX = startingX * tileSize;
+  if (scrollY > startingY * tileSize) scrollY = startingY * tileSize;
+  if (scrollX < startingX * tileSize - (mapWidth - 2) * tileSize)
+    scrollX = startingX * tileSize - (mapWidth - 2) * tileSize;
+  if (scrollY < startingY * tileSize - (mapHeight - 2) * tileSize)
+    scrollY = startingY * tileSize - (mapHeight - 2) * tileSize;
 
   map2d.imageSmoothingEnabled = false;
   map2d.setTransform(zoom, 0, 0, zoom, 0, 0);
