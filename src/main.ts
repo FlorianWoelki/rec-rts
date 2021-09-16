@@ -50,7 +50,7 @@ for (let i = 0; i < cards.length; i++) {
   cards[i] = {
     name: 'Base',
     imageX: 0,
-    imageY: 6,
+    imageY: 9,
   };
 }
 
@@ -265,7 +265,7 @@ const render = (): void => {
         map2d.drawImage(
           tileImage,
           0,
-          8 * 8,
+          11 * 8,
           8,
           8,
           selectedX * tileSize + xOffset + 18,
@@ -287,7 +287,7 @@ const render = (): void => {
 };
 
 const drawHUD = (): void => {
-  map2d.drawImage(tileImage, 0, 8 * 8, 8, 8, 4, 4, 8, 8);
+  map2d.drawImage(tileImage, 0, 11 * 8, 8, 8, 4, 4, 8, 8);
   drawString('0', 14, 5, 6);
 };
 

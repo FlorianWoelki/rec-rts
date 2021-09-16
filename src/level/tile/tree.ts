@@ -89,7 +89,7 @@ export class Tree extends Tile {
     }
 
     const sx = 2 * 8;
-    const sy = 6 * 8;
+    const sy = 9 * 8;
     level.renderTile(map2d, sx, sy, x, y, xOffset, yOffset);
     level.renderTile(map2d, sx + 8, sy, x, y, xOffset + 8, yOffset);
     level.renderTile(map2d, sx, sy + 8, x, y, xOffset, yOffset + 8);

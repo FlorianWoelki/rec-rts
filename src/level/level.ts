@@ -1,6 +1,7 @@
 import spritesheet from '../../assets/spritesheet.png';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Grass } from './tile/grass';
+import { Rock } from './tile/rock';
 import { Sand } from './tile/sand';
 import { Tile } from './tile/tile';
 import { Tree } from './tile/tree';
@@ -11,6 +12,7 @@ export const Tiles = {
   grass: new Grass(1),
   sand: new Sand(2),
   tree: new Tree(3),
+  rock: new Rock(4),
   startingPosition: new Grass(999),
 };
 
@@ -84,7 +86,7 @@ export class Level {
           map2d.drawImage(
             this.tileImage,
             0 * 8,
-            6 * 8,
+            9 * 8,
             16,
             16,
             x * this.tileSize + xOffset,

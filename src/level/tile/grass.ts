@@ -31,6 +31,12 @@ export class Grass extends Tile {
     const ur =
       level.getTile(x + 1, y - 1).id === this.id ||
       level.getTile(x + 1, y - 1).id === Tiles.tree.id;
+    const dl =
+      level.getTile(x - 1, y + 1).id === this.id ||
+      level.getTile(x - 1, y + 1).id === Tiles.tree.id;
+    const dr =
+      level.getTile(x + 1, y + 1).id === this.id ||
+      level.getTile(x + 1, y + 1).id === Tiles.tree.id;
 
     if (!u && !l) {
       level.renderTile(map2d, 0, 3 * 8, x, y, xOffset, yOffset);
@@ -71,29 +77,37 @@ export class Grass extends Tile {
     if (!d && !l) {
       level.renderTile(map2d, 0, 5 * 8, x, y, xOffset, yOffset + 8);
     } else {
-      level.renderTile(
-        map2d,
-        !l ? 0 : sx,
-        !d ? 5 * 8 : sy,
-        x,
-        y,
-        xOffset,
-        yOffset + 8,
-      );
+      if (d && l && !dl) {
+        level.renderTile(map2d, 4 * 8, 3 * 8, x, y, xOffset, yOffset + 8);
+      } else {
+        level.renderTile(
+          map2d,
+          !l ? 0 : sx,
+          !d ? 5 * 8 : sy,
+          x,
+          y,
+          xOffset,
+          yOffset + 8,
+        );
+      }
     }
 
     if (!d && !r) {
       level.renderTile(map2d, 2 * 8, 5 * 8, x, y, xOffset + 8, yOffset + 8);
     } else {
-      level.renderTile(
-        map2d,
-        !r ? 2 * 8 : sx,
-        !d ? 5 * 8 : sy,
-        x,
-        y,
-        xOffset + 8,
-        yOffset + 8,
-      );
+      if (d && r && !dr) {
+        level.renderTile(map2d, 3 * 8, 3 * 8, x, y, xOffset + 8, yOffset + 8);
+      } else {
+        level.renderTile(
+          map2d,
+          !r ? 2 * 8 : sx,
+          !d ? 5 * 8 : sy,
+          x,
+          y,
+          xOffset + 8,
+          yOffset + 8,
+        );
+      }
     }
   }
 }
