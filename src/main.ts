@@ -151,12 +151,12 @@ const clickTile = (
     return;
   }
 
-  if (selectedX !== xTile || selectedY !== yTile) {
+  const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
+  if ((selectedX !== xTile || selectedY !== yTile) && data >= 1) {
     selectedX = xTile;
     selectedY = yTile;
     shouldDrawSelection = true;
 
-    const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
     shouldShowTileData = data === 3;
   }
 
@@ -225,12 +225,14 @@ const render = (): void => {
 
     if (shouldShowTileData) {
       const tile = level.getTile(selectedX, selectedY);
-      drawString(
-        `Outcome: ${tile.getOutcome()}`,
-        selectedX * tileSize + xOffset + 18,
-        selectedY * tileSize + yOffset + 6,
-        4,
-      );
+      if (tile.getOutcome() !== 0) {
+        drawString(
+          `Outcome: ${tile.getOutcome()}`,
+          selectedX * tileSize + xOffset + 18,
+          selectedY * tileSize + yOffset + 6,
+          4,
+        );
+      }
     }
   }
 };
