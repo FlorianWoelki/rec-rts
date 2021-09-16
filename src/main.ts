@@ -161,7 +161,14 @@ const clickTile = (
   }
 
   const data = level.getTileState(xTile, yTile, TileStateMask.VISIBLE);
-  if ((selectedX !== xTile || selectedY !== yTile) && data >= 1) {
+  if (data === 0) {
+    selectedX = null;
+    selectedY = null;
+    requestAnimationFrame(render);
+    return;
+  }
+
+  if (selectedX !== xTile || selectedY !== yTile) {
     selectedX = xTile;
     selectedY = yTile;
 
@@ -242,6 +249,13 @@ const render = (): void => {
       }
     }
   }
+
+  drawHUD();
+};
+
+const drawHUD = (): void => {
+  map2d.drawImage(tileImage, 0, 8 * 8, 8, 8, 4, 4, 8, 8);
+  drawString('0', 14, 5, 6);
 };
 
 const tileCharacters =
