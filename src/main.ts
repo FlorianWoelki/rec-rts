@@ -125,9 +125,8 @@ const init = (): void => {
   render();
 };
 
-let selectedX = -1;
-let selectedY = -1;
-let shouldDrawSelection = false;
+let selectedX: number | null = null;
+let selectedY: number | null = null;
 let shouldShowTileData = false;
 
 const clickTile = (
@@ -146,8 +145,8 @@ const clickTile = (
   }
 
   if (xTile < 0 || yTile < 0 || xTile > mapWidth || yTile > mapHeight) {
-    selectedX = -1;
-    selectedY = -1;
+    selectedX = null;
+    selectedY = null;
     return;
   }
 
@@ -155,7 +154,6 @@ const clickTile = (
   if ((selectedX !== xTile || selectedY !== yTile) && data >= 1) {
     selectedX = xTile;
     selectedY = yTile;
-    shouldDrawSelection = true;
 
     shouldShowTileData = data === 3;
   }
@@ -166,7 +164,6 @@ const clickTile = (
 const update = (): void => {
   requestAnimationFrame(update);
   const scrollData = keyboard.update(scrollX, scrollY, () => {
-    shouldDrawSelection = false;
     requestAnimationFrame(render);
   });
   if (scrollX !== scrollData[0] || scrollY !== scrollData[1]) {
@@ -214,7 +211,7 @@ const render = (): void => {
     drawCard(cards[i].imageX, cards[i].imageY, width / 2, height - 25);
   }
 
-  if (shouldDrawSelection) {
+  if (selectedX && selectedY) {
     map2d.strokeStyle = 'white';
     map2d.strokeRect(
       selectedX * tileSize + xOffset,
@@ -273,13 +270,20 @@ const checkClickCard = (sx: number, sy: number): void => {
   const cardX = width / 2;
   const cardY = height - 25;
 
-  if (sx >= cardX && sx <= cardX + 16 && sy >= cardY && sy <= cardY + 16) {
+  if (
+    sx >= cardX &&
+    sx <= cardX + 16 &&
+    sy >= cardY &&
+    sy <= cardY + 16 &&
+    selectedX &&
+    selectedY
+  ) {
     level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
     level.recalcVisibility();
     requestAnimationFrame(render);
 
-    selectedX = -1;
-    selectedY = -1;
+    selectedX = null;
+    selectedY = null;
   }
 };
 
