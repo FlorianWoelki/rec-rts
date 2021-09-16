@@ -6,7 +6,7 @@ import { Tile } from './tile/tile';
 import { Tree } from './tile/tree';
 import { Water } from './tile/water';
 
-export const Tiles: Record<string, Tile> = {
+export const Tiles = {
   water: new Water(0),
   grass: new Grass(1),
   sand: new Sand(2),
