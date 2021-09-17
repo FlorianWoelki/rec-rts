@@ -2,6 +2,7 @@ import './style.css';
 import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
 import { TileStateMask, Level, Tiles } from './level/level';
+import { TileOutcomeType } from './level/tile/tile';
 
 let pageLoaded = false;
 window.onload = (): void => {
@@ -255,7 +256,7 @@ const render = (): void => {
       const tile = level.getTile(selectedX, selectedY);
       const tileOutcome = tile.getOutcome();
       if (tileOutcome) {
-        map2d.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        map2d.fillStyle = 'rgba(0, 0, 0, 0.3)';
         map2d.fillRect(
           selectedX * tileSize + xOffset + tileSize,
           selectedY * tileSize + yOffset,
@@ -264,8 +265,8 @@ const render = (): void => {
         );
         map2d.drawImage(
           tileImage,
-          0,
-          11 * 8,
+          TileOutcomeType[tileOutcome.type].imageX * 8,
+          TileOutcomeType[tileOutcome.type].imageY * 8,
           8,
           8,
           selectedX * tileSize + xOffset + 18,

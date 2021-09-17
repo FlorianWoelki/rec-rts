@@ -1,12 +1,19 @@
 import { Level } from '../level';
 
-export enum TileOutcomeType {
-  WOOD,
-}
+export const TileOutcomeType = {
+  wood: {
+    imageX: 0,
+    imageY: 11,
+  },
+  stone: {
+    imageX: 1,
+    imageY: 11,
+  },
+};
 
 export interface TileOutcome {
   amount: number;
-  type: TileOutcomeType;
+  type: keyof typeof TileOutcomeType;
 }
 
 export abstract class Tile {

@@ -1,5 +1,5 @@
 import { Level, Tiles } from '../level';
-import { Tile, TileOutcome, TileOutcomeType } from './tile';
+import { Tile, TileOutcome } from './tile';
 
 export class Tree extends Tile {
   constructor(id: number) {
@@ -103,7 +103,7 @@ export class Tree extends Tile {
   public getOutcome(): TileOutcome {
     return {
       amount: 3,
-      type: TileOutcomeType.WOOD,
+      type: 'wood',
     };
   }
 }

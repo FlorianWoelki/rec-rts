@@ -1,5 +1,5 @@
 import { Level } from '../level';
-import { Tile } from './tile';
+import { Tile, TileOutcome } from './tile';
 
 export class Rock extends Tile {
   constructor(id: number) {
@@ -107,5 +107,12 @@ export class Rock extends Tile {
     if (u && !r && ur) {
       level.renderTile(map2d, 3 * 8, 6 * 8, x, y, xOffset + 8, yOffset - 8);
     }*/
+  }
+
+  public getOutcome(): TileOutcome {
+    return {
+      amount: 3,
+      type: 'stone',
+    };
   }
 }
