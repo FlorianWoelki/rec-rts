@@ -286,9 +286,31 @@ const render = (): void => {
   drawHUD();
 };
 
+const hudItems = [
+  {
+    imageX: 0,
+    imageY: 11,
+  },
+  {
+    imageX: 1,
+    imageY: 11,
+  },
+];
 const drawHUD = (): void => {
-  map2d.drawImage(tileImage, 0, 11 * 8, 8, 8, 4, 4, 8, 8);
-  drawString('0', 14, 5, 6);
+  for (let i = 0; i < hudItems.length; i++) {
+    map2d.drawImage(
+      tileImage,
+      hudItems[i].imageX * 8,
+      hudItems[i].imageY * 8,
+      8,
+      8,
+      4,
+      4 + i * 14,
+      8,
+      8,
+    );
+    drawString('0', 14, 5 + i * 14, 6);
+  }
 };
 
 const tileCharacters =
