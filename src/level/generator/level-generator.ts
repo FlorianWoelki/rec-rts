@@ -114,7 +114,7 @@ export const createMap = (w: number, h: number) => {
 
       if (val < -0.5) {
         map[i] = Tiles.water.id;
-      } else if (val > 0.5 && mval < 0.5) {
+      } else if (val > 0.5 && mval < -1.5) {
         map[i] = Tiles.rock.id;
       } else {
         map[i] = Tiles.grass.id;

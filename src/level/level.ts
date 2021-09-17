@@ -99,7 +99,7 @@ export class Level {
     }
 
     // draw hide tiles
-    /*for (let y = y0; y < y1; y++) {
+    for (let y = y0; y < y1; y++) {
       for (let x = x0; x < x1; x++) {
         const tileState = this.getTileState(x, y, TileStateMask.VISIBLE);
         if (tileState === 1) {
@@ -180,7 +180,7 @@ export class Level {
           }
         }
       }
-    }*/
+    }
   }
 
   public renderTile(
