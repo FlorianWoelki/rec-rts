@@ -165,6 +165,11 @@ export const createMap = (w: number, h: number) => {
   let sx = -1;
   let sy = -1;
   const radius = 1;
+  const treeRadius = 3;
+  const rockRadius = 5;
+  const needTreeAmount = 3;
+  const needRockAmount = 1;
+
   while (sx === -1 || sy === -1) {
     sx = Math.round(Math.random() * w);
     sy = Math.round(Math.random() * h);
@@ -181,9 +186,54 @@ export const createMap = (w: number, h: number) => {
         }
       }
     }
+
+    const shouldHaveTrees = shouldHaveResources(
+      map,
+      w,
+      sx,
+      sy,
+      treeRadius,
+      needTreeAmount,
+      Tiles.tree.id,
+    );
+    const shouldHaveRocks = shouldHaveResources(
+      map,
+      w,
+      sx,
+      sy,
+      rockRadius,
+      needRockAmount,
+      Tiles.rock.id,
+    );
+
+    if (!shouldHaveTrees || !shouldHaveRocks) {
+      sx = -1;
+      sy = -1;
+    }
   }
 
   map[sx + sy * w] = Tiles.startingPosition.id;
 
   return [map, data];
+};
+
+const shouldHaveResources = (
+  map: number[],
+  w: number,
+  sx: number,
+  sy: number,
+  radius: number,
+  amount: number,
+  tileId: number,
+): boolean => {
+  let currentAmount = 0;
+  for (let y = sy - radius; y <= sy + radius; y++) {
+    for (let x = sx - radius; x <= sx + radius; x++) {
+      if (map[x + y * w] === tileId) {
+        currentAmount++;
+      }
+    }
+  }
+
+  return currentAmount >= amount;
 };
