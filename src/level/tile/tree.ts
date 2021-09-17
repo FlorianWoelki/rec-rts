@@ -21,16 +21,20 @@ export class Tree extends Tile {
 
     const u =
       level.getTile(x, y - 1).id === Tiles.water.id ||
-      level.getTile(x, y - 1).id === Tiles.sand.id;
+      level.getTile(x, y - 1).id === Tiles.sand.id ||
+      level.getTile(x, y - 1).id === Tiles.rock.id;
     const d =
       level.getTile(x, y + 1).id === Tiles.water.id ||
-      level.getTile(x, y + 1).id === Tiles.sand.id;
+      level.getTile(x, y + 1).id === Tiles.sand.id ||
+      level.getTile(x, y + 1).id === Tiles.rock.id;
     const l =
       level.getTile(x - 1, y).id === Tiles.water.id ||
-      level.getTile(x - 1, y).id === Tiles.sand.id;
+      level.getTile(x - 1, y).id === Tiles.sand.id ||
+      level.getTile(x - 1, y).id === Tiles.rock.id;
     const r =
       level.getTile(x + 1, y).id === Tiles.water.id ||
-      level.getTile(x + 1, y).id === Tiles.sand.id;
+      level.getTile(x + 1, y).id === Tiles.sand.id ||
+      level.getTile(x + 1, y).id === Tiles.rock.id;
 
     if (u && l) {
       level.renderTile(map2d, 0, 3 * 8, x, y, xOffset, yOffset);
