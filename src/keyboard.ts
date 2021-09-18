@@ -2,7 +2,7 @@ export class Keyboard {
   public scrollX: number = 0;
   public scrollY: number = 0;
 
-  private scrollSpeed: number = 2;
+  private scrollSpeed: number = 3;
   private keys: boolean[] = [];
 
   constructor() {

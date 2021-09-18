@@ -7,6 +7,7 @@ import { TileOutcomeType } from './level/tile/tile';
 let pageLoaded = false;
 window.onload = (): void => {
   pageLoaded = true;
+  loadMap();
   init();
 };
 
@@ -87,27 +88,13 @@ const init = (): void => {
     }
   };
 
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      const i = x + y * mapWidth;
-
-      if (level.tiles[i] === Tiles.startingPosition.id) {
-        startingX = x;
-        startingY = y;
-
-        level.setTileState(startingX, startingY, 1, TileStateMask.OWNED);
-        level.recalcVisibility();
-      }
-    }
-  }
-
   window.onmousemove = (event) => {
     if (!mouseDown) return;
     event.preventDefault();
-    var distX = event.clientX - mouseDownX;
-    var distY = event.clientY - mouseDownY;
+    const distX = event.clientX - mouseDownX;
+    const distY = event.clientY - mouseDownY;
 
-    var scrollDeadZone = 8;
+    const scrollDeadZone = 8;
 
     if (
       scrolling ||
@@ -122,9 +109,28 @@ const init = (): void => {
     }
   };
 
-  update();
   render();
 };
+
+const loadMap = (): void => {
+  for (let y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
+      const i = x + y * mapWidth;
+
+      if (level.tiles[i] === Tiles.startingPosition.id) {
+        startingX = x;
+        startingY = y;
+
+        level.setTileState(startingX, startingY, 1, TileStateMask.OWNED);
+        level.recalcVisibility();
+      }
+    }
+  }
+
+  update();
+};
+
+window.onresize = init;
 
 let selectedX: number | null = null;
 let selectedY: number | null = null;
@@ -184,9 +190,7 @@ const update = (): void => {
   const scrollData = keyboard.update(
     scrollX,
     scrollY,
-    () => {
-      requestAnimationFrame(render);
-    },
+    () => {},
     () => {
       if (selectedX && selectedY) {
         level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
@@ -198,6 +202,7 @@ const update = (): void => {
       }
     },
   );
+
   if (scrollX !== scrollData[0] || scrollY !== scrollData[1]) {
     scrollX = scrollData[0];
     scrollY = scrollData[1];
