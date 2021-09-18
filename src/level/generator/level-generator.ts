@@ -162,6 +162,22 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
+  for (let i = 0; i < (w * h) / 400; i++) {
+    const x = Math.round(Math.random() * w);
+    const y = Math.round(Math.random() * h);
+    for (let j = 0; j < 30; j++) {
+      const xx =
+        x + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
+      const yy =
+        y + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
+      if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+        if (map[xx + yy * w] == Tiles.grass.id) {
+          map[xx + yy * w] = Tiles.flower.id;
+        }
+      }
+    }
+  }
+
   let sx = -1;
   let sy = -1;
   const radius = 1;

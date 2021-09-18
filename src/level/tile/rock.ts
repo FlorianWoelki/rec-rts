@@ -99,14 +99,6 @@ export class Rock extends Tile {
         );
       }
     }
-
-    /*if (u && !l && ul) {
-      level.renderTile(map2d, 4 * 8, 6 * 8, x, y, xOffset, yOffset - 8);
-    }
-
-    if (u && !r && ur) {
-      level.renderTile(map2d, 3 * 8, 6 * 8, x, y, xOffset + 8, yOffset - 8);
-    }*/
   }
 
   public getOutcome(): TileOutcome {

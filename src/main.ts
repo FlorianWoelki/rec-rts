@@ -7,7 +7,7 @@ import { TileOutcomeType } from './level/tile/tile';
 let pageLoaded = false;
 window.onload = (): void => {
   pageLoaded = true;
-  loadMap();
+  initMapState();
   init();
 };
 
@@ -112,7 +112,7 @@ const init = (): void => {
   render();
 };
 
-const loadMap = (): void => {
+const initMapState = (): void => {
   for (let y = 0; y < mapHeight; y++) {
     for (let x = 0; x < mapWidth; x++) {
       const i = x + y * mapWidth;

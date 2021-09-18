@@ -15,28 +15,36 @@ export class Grass extends Tile {
 
     const u =
       level.getTile(x, y - 1).id === this.id ||
-      level.getTile(x, y - 1).id === Tiles.tree.id;
+      level.getTile(x, y - 1).id === Tiles.tree.id ||
+      level.getTile(x, y - 1).id === Tiles.flower.id;
     const d =
       level.getTile(x, y + 1).id === this.id ||
-      level.getTile(x, y + 1).id === Tiles.tree.id;
+      level.getTile(x, y + 1).id === Tiles.tree.id ||
+      level.getTile(x, y + 1).id === Tiles.flower.id;
     const l =
       level.getTile(x - 1, y).id === this.id ||
-      level.getTile(x - 1, y).id === Tiles.tree.id;
+      level.getTile(x - 1, y).id === Tiles.tree.id ||
+      level.getTile(x - 1, y).id === Tiles.flower.id;
     const r =
       level.getTile(x + 1, y).id === this.id ||
-      level.getTile(x + 1, y).id === Tiles.tree.id;
+      level.getTile(x + 1, y).id === Tiles.tree.id ||
+      level.getTile(x + 1, y).id === Tiles.flower.id;
     const ul =
       level.getTile(x - 1, y - 1).id === this.id ||
-      level.getTile(x - 1, y - 1).id === Tiles.tree.id;
+      level.getTile(x - 1, y - 1).id === Tiles.tree.id ||
+      level.getTile(x - 1, y - 1).id === Tiles.flower.id;
     const ur =
       level.getTile(x + 1, y - 1).id === this.id ||
-      level.getTile(x + 1, y - 1).id === Tiles.tree.id;
+      level.getTile(x + 1, y - 1).id === Tiles.tree.id ||
+      level.getTile(x + 1, y - 1).id === Tiles.flower.id;
     const dl =
       level.getTile(x - 1, y + 1).id === this.id ||
-      level.getTile(x - 1, y + 1).id === Tiles.tree.id;
+      level.getTile(x - 1, y + 1).id === Tiles.tree.id ||
+      level.getTile(x - 1, y + 1).id === Tiles.flower.id;
     const dr =
       level.getTile(x + 1, y + 1).id === this.id ||
-      level.getTile(x + 1, y + 1).id === Tiles.tree.id;
+      level.getTile(x + 1, y + 1).id === Tiles.tree.id ||
+      level.getTile(x + 1, y + 1).id === Tiles.flower.id;
 
     if (!u && !l) {
       level.renderTile(map2d, 0, 3 * 8, x, y, xOffset, yOffset);

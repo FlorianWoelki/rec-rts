@@ -1,5 +1,6 @@
 import spritesheet from '../../assets/spritesheet.png';
 import { createAndValidateWorld } from './generator/level-generator';
+import { Flower } from './tile/flower';
 import { Grass } from './tile/grass';
 import { Rock } from './tile/rock';
 import { Sand } from './tile/sand';
@@ -13,6 +14,7 @@ export const Tiles = {
   sand: new Sand(2),
   tree: new Tree(3),
   rock: new Rock(4),
+  flower: new Flower(5),
   startingPosition: new Grass(999),
 };
 
@@ -80,6 +82,13 @@ export class Level {
       for (let x = x0; x < x1; x++) {
         const tile = this.getTile(x, y);
         const tileState = this.getTileState(x, y, TileStateMask.OWNED);
+        if (tile.isOnGrass) {
+          const grassTile = tilesIdArray.find(
+            (tile) => tile.id === Tiles.grass.id,
+          )!;
+          grassTile.render(this, map2d, x, y, xOffset, yOffset);
+        }
+
         tile.render(this, map2d, x, y, xOffset, yOffset);
 
         if (tileState === 1) {

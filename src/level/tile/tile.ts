@@ -21,6 +21,8 @@ export abstract class Tile {
   public isFarmable: boolean = false;
   public isPassable: boolean = true;
 
+  public isOnGrass: boolean = false;
+
   constructor(id: number) {
     this.id = id;
   }
