@@ -162,6 +162,16 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
+  for (let i = 0; i < (w * h) / 40; i++) {
+    const xx = Math.round(Math.random() * w);
+    const yy = Math.round(Math.random() * h);
+    if (xx >= 0 && yy >= 0 && xx < w && yy << h) {
+      if (map[xx + yy * w] === Tiles.sand.id) {
+        map[xx + yy * w] = Tiles.cactus.id;
+      }
+    }
+  }
+
   for (let i = 0; i < (w * h) / 400; i++) {
     const x = Math.round(Math.random() * w);
     const y = Math.round(Math.random() * h);

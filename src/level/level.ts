@@ -1,5 +1,6 @@
 import spritesheet from '../../assets/spritesheet.png';
 import { createAndValidateWorld } from './generator/level-generator';
+import { Cactus } from './tile/cactus';
 import { Flower } from './tile/flower';
 import { Grass } from './tile/grass';
 import { Rock } from './tile/rock';
@@ -15,6 +16,7 @@ export const Tiles = {
   tree: new Tree(3),
   rock: new Rock(4),
   flower: new Flower(5),
+  cactus: new Cactus(6),
   startingPosition: new Grass(999),
 };
 
@@ -87,6 +89,11 @@ export class Level {
             (tile) => tile.id === Tiles.grass.id,
           )!;
           grassTile.render(this, map2d, x, y, xOffset, yOffset);
+        } else if (tile.isOnSand) {
+          const sandTile = tilesIdArray.find(
+            (tile) => tile.id === Tiles.sand.id,
+          )!;
+          sandTile.render(this, map2d, x, y, xOffset, yOffset);
         }
 
         tile.render(this, map2d, x, y, xOffset, yOffset);
