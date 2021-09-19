@@ -17,6 +17,7 @@ export const Tiles = {
   rock: new Rock(4),
   flower: new Flower(5),
   cactus: new Cactus(6),
+  dirt: new Cactus(7),
   startingPosition: new Grass(999),
 };
 

@@ -172,6 +172,28 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
+  for (let i = 0; i < (w * h) / 2800; i++) {
+    const xs = Math.round(Math.random() * w);
+    const ys = Math.round(Math.random() * h);
+    for (let k = 0; k < 10; k++) {
+      const x = xs + Math.round(Math.random() * 21 - 10);
+      const y = ys + Math.round(Math.random() * 21 - 10);
+      for (let j = 0; j < 100; j++) {
+        const xo = x + Math.round(Math.random() * 5 - Math.random() * 5);
+        const yo = y + Math.round(Math.random() * 5 - Math.random() * 5);
+        for (let yy = yo - 1; yy <= yo + 1; yy++) {
+          for (let xx = xo - 1; xx <= xo + 1; xx++) {
+            if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+              if (map[xx + yy * w] === Tiles.grass.id) {
+                map[xx + yy * w] = Tiles.dirt.id;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   for (let i = 0; i < (w * h) / 400; i++) {
     const x = Math.round(Math.random() * w);
     const y = Math.round(Math.random() * h);
