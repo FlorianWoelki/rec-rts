@@ -1,6 +1,7 @@
 import spritesheet from '../../assets/spritesheet.png';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
+import { Dirt } from './tile/dirt';
 import { Flower } from './tile/flower';
 import { Grass } from './tile/grass';
 import { Rock } from './tile/rock';
@@ -17,7 +18,7 @@ export const Tiles = {
   rock: new Rock(4),
   flower: new Flower(5),
   cactus: new Cactus(6),
-  dirt: new Cactus(7),
+  dirt: new Dirt(7),
   startingPosition: new Grass(999),
 };
 
