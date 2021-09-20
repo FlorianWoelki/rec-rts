@@ -37,6 +37,8 @@ export abstract class Tile {
     yOffset: number,
   ): void;
 
+  public update(_level: Level, _xt: number, _yt: number): void {}
+
   public getOutcome(): TileOutcome | undefined {
     return undefined;
   }

@@ -105,7 +105,6 @@ const init = (): void => {
       scrollY += distY / zoom;
       mouseDownX = event.clientX;
       mouseDownY = event.clientY;
-      requestAnimationFrame(render);
     }
   };
 
@@ -171,7 +170,6 @@ const clickTile = (
   if (data === 0) {
     selectedX = null;
     selectedY = null;
-    requestAnimationFrame(render);
     return;
   }
 
@@ -181,12 +179,11 @@ const clickTile = (
 
     shouldShowTileData = data === 3;
   }
-
-  requestAnimationFrame(render);
 };
 
 const update = (): void => {
   requestAnimationFrame(update);
+
   const scrollData = keyboard.update(
     scrollX,
     scrollY,
@@ -195,7 +192,6 @@ const update = (): void => {
       if (selectedX && selectedY) {
         level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
         level.recalcVisibility();
-        requestAnimationFrame(render);
 
         selectedX = null;
         selectedY = null;
@@ -206,11 +202,14 @@ const update = (): void => {
   if (scrollX !== scrollData[0] || scrollY !== scrollData[1]) {
     scrollX = scrollData[0];
     scrollY = scrollData[1];
-    requestAnimationFrame(render);
   }
+
+  level.update();
 };
 
 const render = (): void => {
+  requestAnimationFrame(render);
+
   const maxZoom = 300;
   const aspectRation = 16 / 9;
   zoom = Math.max(
@@ -365,7 +364,6 @@ const checkClickCard = (sx: number, sy: number): void => {
   ) {
     level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
     level.recalcVisibility();
-    requestAnimationFrame(render);
 
     selectedX = null;
     selectedY = null;

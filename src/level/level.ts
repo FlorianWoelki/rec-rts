@@ -31,8 +31,11 @@ export enum TileStateMask {
 
 export class Level {
   public tiles: number[];
+  public data: number[];
   public tilesState: number[];
   public tileSize: number = 16;
+
+  public tickCount: number = 0;
 
   public tileImage: HTMLImageElement;
   private imagesToLoad: number = 0;
@@ -44,6 +47,7 @@ export class Level {
     this.width = width;
     this.height = height;
     this.tiles = new Array(width * height);
+    this.data = new Array(width * height);
     this.tilesState = new Array(width * height);
 
     this.tileImage = this.loadImage(spritesheet);
@@ -67,7 +71,21 @@ export class Level {
 
     this.tiles = map[0];
     this.tilesState = map[1];
+    this.data = map[1];
     this.tilesState.fill(0);
+  }
+
+  public update(): void {
+    this.tickCount++;
+    if (this.tickCount >= Number.MAX_VALUE) {
+      this.tickCount = 0;
+    }
+
+    for (let i = 0; i < (this.width * this.height) / 50; i++) {
+      const xt = Math.round(Math.random() * this.width);
+      const yt = Math.round(Math.random() * this.height);
+      this.getTile(xt, yt).update(this, xt, yt);
+    }
   }
 
   public render(
@@ -258,6 +276,16 @@ export class Level {
   public setTile(x: number, y: number, tile: Tile): void {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return;
     this.tiles[x + y * this.width] = tile.id;
+  }
+
+  public setData(x: number, y: number, value: number): void {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return;
+    this.data[x + y * this.width] = value;
+  }
+
+  public getData(x: number, y: number): number {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return 0;
+    return this.data[x + y * this.width] & 0xff;
   }
 
   public recalcVisibility(): void {
