@@ -251,6 +251,7 @@ export class Level {
       this.tilesState[x + y * this.width] = (data << 1) | (oldData & 1);
     } else {
       this.tilesState[x + y * this.width] ^= data;
+      this.tiles[x + y * this.width] = Tiles.dirt.id;
     }
   }
 
