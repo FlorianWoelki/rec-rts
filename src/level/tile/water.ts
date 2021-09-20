@@ -153,7 +153,7 @@ export class Water extends Tile {
   }
 
   public update(level: Level, _xt: number, _yt: number): void {
-    if (level.tickCount % 40 === 0) {
+    if (level.tickCount % 10 === 0) {
       this.shouldAnimate = true;
     }
   }

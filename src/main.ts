@@ -5,9 +5,9 @@ import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
 
 let pageLoaded = false;
+let initialized = false;
 window.onload = (): void => {
   pageLoaded = true;
-  initMapState();
   init();
 };
 
@@ -108,25 +108,25 @@ const init = (): void => {
     }
   };
 
-  render();
-};
+  if (!initialized) {
+    for (let y = 0; y < mapHeight; y++) {
+      for (let x = 0; x < mapWidth; x++) {
+        const i = x + y * mapWidth;
 
-const initMapState = (): void => {
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      const i = x + y * mapWidth;
+        if (level.tiles[i] === Tiles.startingPosition.id) {
+          startingX = x;
+          startingY = y;
 
-      if (level.tiles[i] === Tiles.startingPosition.id) {
-        startingX = x;
-        startingY = y;
-
-        level.setTileState(startingX, startingY, 1, TileStateMask.OWNED);
-        level.recalcVisibility();
+          level.setTileState(startingX, startingY, 1, TileStateMask.OWNED);
+          level.recalcVisibility();
+        }
       }
     }
+    gameLoop();
+    initialized = true;
   }
 
-  update();
+  render();
 };
 
 window.onresize = init;
@@ -181,8 +181,20 @@ const clickTile = (
   }
 };
 
-const update = (): void => {
-  requestAnimationFrame(update);
+let lastFrameTime = Date.now();
+let currentFrameTime = Date.now();
+let timeElapsed = 0;
+const updateInterval = 60;
+const gameLoop = (): void => {
+  requestAnimationFrame(gameLoop);
+
+  lastFrameTime = currentFrameTime;
+  currentFrameTime = Date.now();
+  timeElapsed += currentFrameTime - lastFrameTime;
+  if (timeElapsed >= updateInterval) {
+    timeElapsed = 0;
+    update();
+  }
 
   const scrollData = keyboard.update(
     scrollX,
@@ -204,12 +216,14 @@ const update = (): void => {
     scrollY = scrollData[1];
   }
 
+  render();
+};
+
+const update = (): void => {
   level.update();
 };
 
 const render = (): void => {
-  requestAnimationFrame(render);
-
   const maxZoom = 300;
   const aspectRation = 16 / 9;
   zoom = Math.max(
