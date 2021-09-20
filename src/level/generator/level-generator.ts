@@ -172,7 +172,7 @@ export const createMap = (w: number, h: number) => {
     }
   }
 
-  for (let i = 0; i < (w * h) / 2800; i++) {
+  /*for (let i = 0; i < (w * h) / 2800; i++) {
     const xs = Math.round(Math.random() * w);
     const ys = Math.round(Math.random() * h);
     for (let k = 0; k < 10; k++) {
@@ -192,7 +192,7 @@ export const createMap = (w: number, h: number) => {
         }
       }
     }
-  }
+  }*/
 
   for (let i = 0; i < (w * h) / 400; i++) {
     const x = Math.round(Math.random() * w);
