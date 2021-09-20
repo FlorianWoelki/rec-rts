@@ -5,6 +5,7 @@ export class Cactus extends Tile {
   constructor(id: number) {
     super(id);
     this.isOnSand = true;
+    this.color = 0xfbbf24;
   }
 
   public render(

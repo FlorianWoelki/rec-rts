@@ -24,6 +24,8 @@ export abstract class Tile {
   public isOnGrass: boolean = false;
   public isOnSand: boolean = false;
 
+  public color: number = 0x00;
+
   constructor(id: number) {
     this.id = id;
   }

@@ -6,6 +6,7 @@ export class Rock extends Tile {
     super(id);
     this.isFarmable = true;
     this.isPassable = false;
+    this.color = 0x9ca3af;
   }
 
   public render(

@@ -5,6 +5,7 @@ export class Flower extends Tile {
   constructor(id: number) {
     super(id);
     this.isOnGrass = true;
+    this.color = 0x10b981;
   }
 
   public render(

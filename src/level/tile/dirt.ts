@@ -2,6 +2,11 @@ import { Level } from '../level';
 import { Tile } from './tile';
 
 export class Dirt extends Tile {
+  constructor(id: number) {
+    super(id);
+    this.color = 0x78350f;
+  }
+
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,

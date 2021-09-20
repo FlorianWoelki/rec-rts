@@ -7,6 +7,7 @@ export class Tree extends Tile {
     this.isFarmable = true;
     this.isPassable = false;
     this.isOnGrass = true;
+    this.color = 0x065f46;
   }
 
   public render(

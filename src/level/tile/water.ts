@@ -11,6 +11,7 @@ export class Water extends Tile {
   constructor(id: number) {
     super(id);
     this.isPassable = false;
+    this.color = 0x3b82f6;
   }
 
   public render(
