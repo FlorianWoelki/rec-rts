@@ -3,6 +3,7 @@ import spritesheet from '../assets/spritesheet.png';
 import { Keyboard } from './keyboard';
 import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
+import { Minimap } from './minimap';
 
 let pageLoaded = false;
 let initialized = false;
@@ -46,6 +47,7 @@ const tileImage = loadImage(spritesheet);
 const mapCanvas = document.querySelector<HTMLCanvasElement>('#map')!;
 const map2d = mapCanvas.getContext('2d')!;
 const keyboard = new Keyboard();
+let minimap: Minimap;
 
 const cards = new Array(1);
 for (let i = 0; i < cards.length; i++) {
@@ -58,16 +60,12 @@ for (let i = 0; i < cards.length; i++) {
 
 const level = new Level(mapWidth, mapHeight);
 
-let imageData = map2d.createImageData(mapWidth, mapHeight);
-const minimapCanvas = document.createElement('canvas');
-
 const init = (): void => {
   if (!pageLoaded || imagesToLoad > 0) return;
 
   mapCanvas.width = window.innerWidth;
   mapCanvas.height = window.innerHeight;
-  minimapCanvas.width = imageData.width;
-  minimapCanvas.height = imageData.height;
+  minimap = new Minimap(map2d, mapWidth, mapHeight);
 
   mapCanvas.onmousedown = (event) => {
     event.preventDefault();
@@ -308,57 +306,7 @@ const render = (): void => {
   }
 
   drawHUD();
-  drawMinimap();
-};
-
-const drawMinimap = (): void => {
-  const downScale = 10;
-  const mapX =
-    Math.floor(map2d.canvas.width / zoom) -
-    mapCanvas.width / (tileSize + zoom + downScale) -
-    8;
-  const mapY = 8;
-
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      const i = x + y * mapWidth;
-      const tile = level.getTile(x, y);
-      const [r, g, b] = getRGB(tile.color);
-
-      if (level.getTileState(x, y, TileStateMask.OWNED)) {
-        imageData.data[i * 4] = 255;
-        imageData.data[i * 4 + 1] = 0;
-        imageData.data[i * 4 + 2] = 0;
-        imageData.data[i * 4 + 3] = 255;
-      } else if (level.getTileState(x, y, TileStateMask.VISIBLE) >= 1) {
-        imageData.data[i * 4] = r;
-        imageData.data[i * 4 + 1] = g;
-        imageData.data[i * 4 + 2] = b;
-        imageData.data[i * 4 + 3] = 255;
-      } else {
-        imageData.data[i * 4] = 0;
-        imageData.data[i * 4 + 1] = 0;
-        imageData.data[i * 4 + 2] = 0;
-        imageData.data[i * 4 + 3] = 255;
-      }
-    }
-  }
-
-  minimapCanvas.getContext('2d')!.putImageData(imageData, 0, 0);
-  map2d.drawImage(
-    minimapCanvas,
-    mapX,
-    mapY,
-    mapCanvas.width / (tileSize + zoom + downScale),
-    mapCanvas.width / (tileSize + zoom + downScale),
-  );
-};
-
-const getRGB = (hex: number): [number, number, number] => {
-  const r = (hex >> 16) & 0xff;
-  const g = (hex >> 8) & 0xff;
-  const b = hex & 0xff;
-  return [r, g, b];
+  minimap.render(mapCanvas, level, tileSize, zoom);
 };
 
 const hudItems = [
