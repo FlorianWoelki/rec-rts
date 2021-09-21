@@ -42,10 +42,12 @@ export class Level {
 
   private width: number;
   private height: number;
+  private seed?: number;
 
-  constructor(width: number, height: number) {
+  constructor(width: number, height: number, seed?: number) {
     this.width = width;
     this.height = height;
+    this.seed = seed;
     this.tiles = new Array(width * height);
     this.data = new Array(width * height);
     this.tilesState = new Array(width * height);
@@ -67,7 +69,7 @@ export class Level {
   }
 
   private init(): void {
-    const map = createAndValidateWorld(this.width, this.height);
+    const map = createAndValidateWorld(this.width, this.height, this.seed);
 
     this.tiles = map[0];
     this.tilesState = map[1];
