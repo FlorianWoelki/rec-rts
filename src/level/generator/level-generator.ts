@@ -1,5 +1,24 @@
 import { Tiles } from '../level';
 
+Math.seed = (s: number): (() => number) => {
+  const mask = 0xffffffff;
+  let m_w = (123456789 + s) & mask;
+  let m_z = (987654321 - s) & mask;
+
+  return () => {
+    m_z = (36969 * (m_z & 65535) + (m_z >>> 16)) & mask;
+    m_w = (18000 * (m_w & 65535) + (m_w >>> 16)) & mask;
+
+    let result = ((m_z << 16) + (m_w & 65535)) >>> 0;
+    result /= 4294967296;
+    return result;
+  };
+};
+
+let random: () => number = Math.seed(
+  Math.random() * (10 + Math.random() * (100 - 10)),
+);
+
 export class LevelGen {
   public w: number;
   public h: number;
@@ -12,7 +31,7 @@ export class LevelGen {
 
     for (let y = 0; y < h; y += featureSize) {
       for (let x = 0; x < w; x += featureSize) {
-        this.setSample(x, y, Math.random() * 2 - 1);
+        this.setSample(x, y, random() * 2 - 1);
       }
     }
 
@@ -29,7 +48,7 @@ export class LevelGen {
           const d = this.sample(x + stepSize, y + stepSize);
 
           const e =
-            (a + b + c + d) / 4.0 + (Math.random() * 2 - 1) * stepSize * scale;
+            (a + b + c + d) / 4.0 + (random() * 2 - 1) * stepSize * scale;
           this.setSample(x + halfStep, y + halfStep, e);
         }
       }
@@ -44,11 +63,9 @@ export class LevelGen {
           const f = this.sample(x - halfStep, y + halfStep);
 
           const H =
-            (a + b + d + e) / 4.0 +
-            (Math.random() * 2 - 1) * stepSize * scale * 0.5;
+            (a + b + d + e) / 4.0 + (random() * 2 - 1) * stepSize * scale * 0.5;
           const g =
-            (a + c + d + f) / 4.0 +
-            (Math.random() * 2 - 1) * stepSize * scale * 0.5;
+            (a + c + d + f) / 4.0 + (random() * 2 - 1) * stepSize * scale * 0.5;
           this.setSample(x + halfStep, y, H);
           this.setSample(x, y + halfStep, g);
         }
@@ -68,23 +85,35 @@ export class LevelGen {
   }
 }
 
-export const createAndValidateWorld = (w: number, h: number) => {
+export const createAndValidateWorld = (
+  w: number,
+  h: number,
+  seed: number = Math.random() * Number.MAX_SAFE_INTEGER,
+) => {
   do {
-    const result = createMap(w, h);
+    const result = createMap(w, h, seed);
     const count: number[] = new Array(256);
 
     for (let i = 0; i < w * h; i++) {
       count[result[0][i] & 0xff]++;
     }
 
-    if (count[2 & 0xff] < 100) continue;
-    if (count[1 & 0xff] < 100) continue;
+    if (count[Tiles.rock.id & 0xff] < 100) continue;
+    if (count[Tiles.sand.id & 0xff] < 100) continue;
+    if (count[Tiles.grass.id & 0xff] < 100) continue;
+    if (count[Tiles.tree.id & 0xff] < 100) continue;
 
     return result;
   } while (true);
 };
 
-export const createMap = (w: number, h: number) => {
+export const createMap = (
+  w: number,
+  h: number,
+  seed: number = Math.random() * Number.MAX_SAFE_INTEGER,
+) => {
+  random = Math.seed(seed);
+
   const mnoise1 = new LevelGen(w, h, 16);
   const mnoise2 = new LevelGen(w, h, 16);
   const mnoise3 = new LevelGen(w, h, 16);
@@ -123,16 +152,14 @@ export const createMap = (w: number, h: number) => {
   }
 
   for (let i = 0; i < (w * h) / 2800; i++) {
-    let xs = Math.round(Math.random() * w);
-    let ys = Math.round(Math.random() * h);
+    let xs = Math.round(random() * w);
+    let ys = Math.round(random() * h);
     for (let k = 0; k < 10; k++) {
-      let x = xs + Math.round(Math.random() * 21 - 10);
-      let y = ys + Math.round(Math.random() * 21 - 10);
+      let x = xs + Math.round(random() * 21 - 10);
+      let y = ys + Math.round(random() * 21 - 10);
       for (let j = 0; j < 100; j++) {
-        let xo =
-          x + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
-        let yo =
-          y + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
+        let xo = x + Math.round(random() * 5) - Math.round(random() * 5);
+        let yo = y + Math.round(random() * 5) - Math.round(random() * 5);
         for (let yy = yo - 1; yy <= yo + 1; yy++) {
           for (let xx = xo - 1; xx <= xo + 1; xx++) {
             if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
@@ -147,13 +174,11 @@ export const createMap = (w: number, h: number) => {
   }
 
   for (let i = 0; i < (w * h) / 400; i++) {
-    const x = Math.round(Math.random() * w);
-    const y = Math.round(Math.random() * h);
+    const x = Math.round(random() * w);
+    const y = Math.round(random() * h);
     for (let j = 0; j < 200; j++) {
-      const xx =
-        x + Math.round(Math.random() * 15) - Math.round(Math.random() * 15);
-      const yy =
-        y + Math.round(Math.random() * 15) - Math.round(Math.random() * 15);
+      const xx = x + Math.round(random() * 15) - Math.round(random() * 15);
+      const yy = y + Math.round(random() * 15) - Math.round(random() * 15);
       if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
         if (map[xx + yy * w] == Tiles.grass.id) {
           map[xx + yy * w] = Tiles.tree.id;
@@ -163,8 +188,8 @@ export const createMap = (w: number, h: number) => {
   }
 
   for (let i = 0; i < (w * h) / 40; i++) {
-    const xx = Math.round(Math.random() * w);
-    const yy = Math.round(Math.random() * h);
+    const xx = Math.round(random() * w);
+    const yy = Math.round(random() * h);
     if (xx >= 0 && yy >= 0 && xx < w && yy << h) {
       if (map[xx + yy * w] === Tiles.sand.id) {
         map[xx + yy * w] = Tiles.cactus.id;
@@ -173,14 +198,14 @@ export const createMap = (w: number, h: number) => {
   }
 
   /*for (let i = 0; i < (w * h) / 2800; i++) {
-    const xs = Math.round(Math.random() * w);
-    const ys = Math.round(Math.random() * h);
+    const xs = Math.round(random() * w);
+    const ys = Math.round(random() * h);
     for (let k = 0; k < 10; k++) {
-      const x = xs + Math.round(Math.random() * 21 - 10);
-      const y = ys + Math.round(Math.random() * 21 - 10);
+      const x = xs + Math.round(random() * 21 - 10);
+      const y = ys + Math.round(random() * 21 - 10);
       for (let j = 0; j < 100; j++) {
-        const xo = x + Math.round(Math.random() * 5 - Math.random() * 5);
-        const yo = y + Math.round(Math.random() * 5 - Math.random() * 5);
+        const xo = x + Math.round(random() * 5 - random() * 5);
+        const yo = y + Math.round(random() * 5 - random() * 5);
         for (let yy = yo - 1; yy <= yo + 1; yy++) {
           for (let xx = xo - 1; xx <= xo + 1; xx++) {
             if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
@@ -195,13 +220,11 @@ export const createMap = (w: number, h: number) => {
   }*/
 
   for (let i = 0; i < (w * h) / 400; i++) {
-    const x = Math.round(Math.random() * w);
-    const y = Math.round(Math.random() * h);
+    const x = Math.round(random() * w);
+    const y = Math.round(random() * h);
     for (let j = 0; j < 30; j++) {
-      const xx =
-        x + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
-      const yy =
-        y + Math.round(Math.random() * 5) - Math.round(Math.random() * 5);
+      const xx = x + Math.round(random() * 5) - Math.round(random() * 5);
+      const yy = y + Math.round(random() * 5) - Math.round(random() * 5);
       if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
         if (map[xx + yy * w] == Tiles.grass.id) {
           map[xx + yy * w] = Tiles.flower.id;
@@ -219,8 +242,8 @@ export const createMap = (w: number, h: number) => {
   const needRockAmount = 1;
 
   while (sx === -1 || sy === -1) {
-    sx = Math.round(Math.random() * w);
-    sy = Math.round(Math.random() * h);
+    sx = Math.round(random() * w);
+    sy = Math.round(random() * h);
     outer: for (let y = sy - radius; y <= sy + radius; y++) {
       for (let x = sx - radius; x <= sx + radius; x++) {
         if (
