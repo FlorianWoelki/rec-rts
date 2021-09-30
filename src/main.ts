@@ -4,6 +4,7 @@ import { Keyboard } from './keyboard';
 import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
 import { Minimap } from './minimap';
+import { Roboter } from './entity/roboter';
 
 let pageLoaded = false;
 let initialized = false;
@@ -205,6 +206,9 @@ const gameLoop = (): void => {
     () => {},
     () => {
       if (selectedX && selectedY) {
+        for (let i = 0; i < 5; i++)
+          level.entities.push(new Roboter(selectedX, selectedY));
+
         level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
         level.recalcVisibility();
 
