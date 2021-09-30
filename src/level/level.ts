@@ -78,6 +78,16 @@ export class Level {
     this.tilesState = map[1];
     this.data = map[1];
     this.tilesState.fill(0);
+
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        if (this.tiles[x + y * this.width] === Tiles.startingPosition.id) {
+          for (let i = 0; i < 100; i++) {
+            this.entities.push(new Roboter(x, y));
+          }
+        }
+      }
+    }
   }
 
   public update(): void {
@@ -146,7 +156,7 @@ export class Level {
     );
 
     // draw hide tiles
-    for (let y = y0; y < y1; y++) {
+    /*for (let y = y0; y < y1; y++) {
       for (let x = x0; x < x1; x++) {
         const tileState = this.getTileState(x, y, TileStateMask.VISIBLE);
         if (tileState === 1) {
@@ -227,7 +237,7 @@ export class Level {
           }
         }
       }
-    }
+    }*/
   }
 
   public renderTile(

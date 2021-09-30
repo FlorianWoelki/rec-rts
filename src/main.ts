@@ -4,7 +4,6 @@ import { Keyboard } from './keyboard';
 import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
 import { Minimap } from './minimap';
-import { Roboter } from './entity/roboter';
 
 let pageLoaded = false;
 let initialized = false;
@@ -89,8 +88,6 @@ const init = (): void => {
       const xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
       const yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
       clickTile(xTile, yTile, event.clientX / zoom, event.clientY / zoom);
-
-      level.entities.push(new Roboter(xTile, yTile));
     }
   };
 
