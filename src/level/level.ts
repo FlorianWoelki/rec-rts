@@ -1,4 +1,5 @@
 import spritesheet from '../../assets/spritesheet.png';
+import { Roboter } from '../entity/roboter';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
 import { Dirt } from './tile/dirt';
@@ -44,6 +45,8 @@ export class Level {
   private height: number;
   private seed?: number;
 
+  public entities: Roboter[] = [];
+
   constructor(width: number, height: number, seed?: number) {
     this.width = width;
     this.height = height;
@@ -88,6 +91,8 @@ export class Level {
       const yt = Math.round(Math.random() * this.height);
       this.getTile(xt, yt).update(this, xt, yt);
     }
+
+    this.entities.forEach((entity) => entity.update());
   }
 
   public render(
@@ -135,6 +140,10 @@ export class Level {
         }
       }
     }
+
+    this.entities.forEach((entity) =>
+      entity.render(map2d, this.tileImage, xOffset, yOffset),
+    );
 
     // draw hide tiles
     for (let y = y0; y < y1; y++) {
