@@ -26,8 +26,8 @@ let startingY = 0;
 const tileSize = 16;
 let zoom = 3;
 
-const mapWidth = 128;
-const mapHeight = 128;
+const mapWidth = 32;
+const mapHeight = 32;
 
 let imagesToLoad = 0;
 const loadImage = (path: string): HTMLImageElement => {
@@ -59,7 +59,7 @@ for (let i = 0; i < cards.length; i++) {
   };
 }
 
-const level = new Level(mapWidth, mapHeight, 4898);
+const level = new Level(mapWidth, mapHeight);
 
 const init = (): void => {
   if (!pageLoaded || imagesToLoad > 0) return;

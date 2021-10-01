@@ -30,6 +30,15 @@ export enum TileStateMask {
   VISIBLE = 3 << 1,
 }
 
+export interface OnTopTile {
+  sx: number;
+  sy: number;
+  x: number;
+  y: number;
+  xOffset: number;
+  yOffset: number;
+}
+
 export class Level {
   public tiles: number[];
   public data: number[];
@@ -46,6 +55,7 @@ export class Level {
   private seed?: number;
 
   public entities: Human[] = [];
+  public onTopTiles: OnTopTile[] = [];
 
   constructor(width: number, height: number, seed?: number) {
     this.width = width;
@@ -83,7 +93,7 @@ export class Level {
       for (let x = 0; x < this.width; x++) {
         const tileId = this.tiles[x + y * this.width];
         if (tileId === Tiles.startingPosition.id) {
-          for (let i = 0; i < 1; i++) {
+          for (let i = 0; i < 5; i++) {
             this.entities.push(new Human(x, y));
           }
         }
@@ -155,6 +165,18 @@ export class Level {
     this.entities.forEach((entity) =>
       entity.render(map2d, this.tileImage, xOffset, yOffset),
     );
+
+    this.onTopTiles.forEach((tile) => {
+      this.renderTile(
+        map2d,
+        tile.sx,
+        tile.sy,
+        tile.x,
+        tile.y,
+        tile.xOffset + xOffset,
+        tile.yOffset + yOffset,
+      );
+    });
 
     // draw hide tiles
     for (let y = y0; y < y1; y++) {
