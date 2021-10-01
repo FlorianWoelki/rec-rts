@@ -5,18 +5,19 @@ export class Roboter {
   private y: number;
 
   private tx: number = 0;
-  private maxTx: number = 8;
+  private maxTx: number = 4;
   private ty: number = 12;
 
-  private movingTx: number = 8;
-  private movingTy: number = 12;
-  private maxMovingTx: number = 24;
+  private movingTx: number = 4;
+  private maxMovingTx: number = 10;
 
   private xa: number = 0;
   private ya: number = 0;
+  private dirX: number = 0;
 
   private moving: boolean = true;
   private animation: number = 0;
+  private movingAnimation: number = 0;
 
   constructor(x: number, y: number) {
     this.x = x;
@@ -32,11 +33,7 @@ export class Roboter {
     map2d.drawImage(
       tileImage,
       this.moving ? this.movingTx * 8 : this.tx * 8,
-      this.moving
-        ? this.xa === -1
-          ? (this.movingTy + 2) * 8
-          : this.movingTy * 8
-        : this.ty * 8,
+      this.xa === -1 || this.dirX === 1 ? (this.ty + 2) * 8 : this.ty * 8,
       16,
       16,
       this.x * 16 + xOffset,
@@ -49,14 +46,16 @@ export class Roboter {
   public update(level: Level): void {
     if (this.xa === 1 || this.ya === 1) {
       this.moving = true;
+      this.dirX = 0;
     } else if (this.xa === -1 || this.ya === -1) {
       this.moving = true;
+      this.dirX = 1;
     } else {
       this.moving = false;
     }
 
     if (this.move(level)) {
-      if (Math.floor(Math.random() * 10) === 0) {
+      if (Math.floor(Math.random() * 20) === 0) {
         this.xa = Math.floor(Math.random() * 3) - 1;
         this.ya = Math.floor(Math.random() * 3) - 1;
       }
@@ -66,18 +65,21 @@ export class Roboter {
     }
 
     this.animation += 1;
-    if (this.animation % 2 === 0) {
+    this.movingAnimation += 1;
+
+    if (this.animation % 5 === 0 && !this.moving) {
       this.animation = 0;
-      if (!this.moving) {
-        this.tx += 2;
-        if (this.tx % this.maxTx === 0) {
-          this.tx = 0;
-        }
-      } else {
-        this.movingTx += 2;
-        if (this.movingTx % this.maxMovingTx === 0) {
-          this.movingTx = 8;
-        }
+      this.tx += 2;
+      if (this.tx % this.maxTx === 0) {
+        this.tx = 0;
+      }
+    }
+
+    if (this.movingAnimation % 2 === 0 && this.moving) {
+      this.movingAnimation = 0;
+      this.movingTx += 2;
+      if (this.movingTx % this.maxMovingTx === 0) {
+        this.movingTx = 4;
       }
     }
   }

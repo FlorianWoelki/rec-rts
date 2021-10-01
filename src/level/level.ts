@@ -75,13 +75,14 @@ export class Level {
     const map = createAndValidateWorld(this.width, this.height, this.seed);
 
     this.tiles = map[0];
-    this.tilesState = map[1];
-    this.data = map[1];
+    this.tilesState = [...map[1]];
+    this.data = [...map[1]];
     this.tilesState.fill(0);
 
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        if (this.tiles[x + y * this.width] === Tiles.startingPosition.id) {
+        const tileId = this.tiles[x + y * this.width];
+        if (tileId === Tiles.startingPosition.id) {
           for (let i = 0; i < 5; i++) {
             this.entities.push(new Roboter(x, y));
           }
