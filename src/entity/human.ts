@@ -1,6 +1,6 @@
 import { Level } from '../level/level';
 
-export class Roboter {
+export class Human {
   private x: number;
   private y: number;
 

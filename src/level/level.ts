@@ -1,5 +1,5 @@
 import spritesheet from '../../assets/spritesheet.png';
-import { Roboter } from '../entity/roboter';
+import { Human } from '../entity/human';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
 import { Dirt } from './tile/dirt';
@@ -45,7 +45,7 @@ export class Level {
   public height: number;
   private seed?: number;
 
-  public entities: Roboter[] = [];
+  public entities: Human[] = [];
 
   constructor(width: number, height: number, seed?: number) {
     this.width = width;
@@ -84,7 +84,7 @@ export class Level {
         const tileId = this.tiles[x + y * this.width];
         if (tileId === Tiles.startingPosition.id) {
           for (let i = 0; i < 5; i++) {
-            this.entities.push(new Roboter(x, y));
+            this.entities.push(new Human(x, y));
           }
         }
       }
