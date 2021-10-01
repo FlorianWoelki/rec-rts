@@ -26,8 +26,8 @@ let startingY = 0;
 const tileSize = 16;
 let zoom = 3;
 
-const mapWidth = 32;
-const mapHeight = 32;
+const mapWidth = 128;
+const mapHeight = 128;
 
 let imagesToLoad = 0;
 const loadImage = (path: string): HTMLImageElement => {

@@ -22,18 +22,16 @@ export class Tree extends Tile {
     const sy = 9 * 8;
 
     if (!level.onTopTiles.find((tile) => tile.x === x && tile.y === y)) {
-      level.onTopTiles.push({ sx, sy, x, y, xOffset: 0, yOffset: 0 });
+      level.onTopTiles.push({ sx, sy, x, y, xExtraOffset: 0, yExtraOffset: 0 });
       level.onTopTiles.push({
         sx: sx + 8,
         sy,
         x,
         y,
-        xOffset: 8,
-        yOffset: 0,
+        xExtraOffset: 8,
+        yExtraOffset: 0,
       });
     }
-    //level.renderTile(map2d, sx, sy, x, y, xOffset, yOffset);
-    //level.renderTile(map2d, sx + 8, sy, x, y, xOffset + 8, yOffset);
     level.renderTile(map2d, sx, sy + 8, x, y, xOffset, yOffset + 8);
     level.renderTile(map2d, sx + 8, sy + 8, x, y, xOffset + 8, yOffset + 8);
   }
