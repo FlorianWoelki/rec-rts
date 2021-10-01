@@ -59,7 +59,7 @@ for (let i = 0; i < cards.length; i++) {
   };
 }
 
-const level = new Level(mapWidth, mapHeight);
+const level = new Level(mapWidth, mapHeight, 4898);
 
 const init = (): void => {
   if (!pageLoaded || imagesToLoad > 0) return;
