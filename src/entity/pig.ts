@@ -1,10 +1,10 @@
 import { Level } from '../level/level';
 import { Entity } from './entity';
 
-export class Human extends Entity {
+export class Pig extends Entity {
   private tx: number = 0;
   private maxTx: number = 4;
-  private ty: number = 12;
+  private ty: number = 16;
 
   private movingTx: number = 4;
   private maxMovingTx: number = 10;
@@ -30,7 +30,7 @@ export class Human extends Entity {
     );
   }
 
-  public update(level: Level): void {
+  public update(level: Level) {
     if (this.xa === 1 || this.ya === 1) {
       this.moving = true;
       this.dirX = 0;
@@ -54,7 +54,7 @@ export class Human extends Entity {
     this.animation += 1;
     this.movingAnimation += 1;
 
-    if (this.animation % 5 === 0 && !this.moving) {
+    if (this.animation % 7 === 0 && !this.moving) {
       this.animation = 0;
       this.tx += 2;
       if (this.tx % this.maxTx === 0) {

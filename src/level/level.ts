@@ -1,5 +1,7 @@
 import spritesheet from '../../assets/spritesheet.png';
+import { Entity } from '../entity/entity';
 import { Human } from '../entity/human';
+import { Pig } from '../entity/pig';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
 import { Dirt } from './tile/dirt';
@@ -54,7 +56,7 @@ export class Level {
   public height: number;
   private seed?: number;
 
-  public entities: Human[] = [];
+  public entities: Entity[] = [];
   public onTopTiles: OnTopTile[] = [];
 
   constructor(width: number, height: number, seed?: number) {
@@ -94,7 +96,11 @@ export class Level {
         const tileId = this.tiles[x + y * this.width];
         if (tileId === Tiles.startingPosition.id) {
           for (let i = 0; i < 5; i++) {
-            this.entities.push(new Human(x, y));
+            this.entities.push(
+              Math.round(Math.random() * 1) === 0
+                ? new Human(x, y)
+                : new Pig(x, y),
+            );
           }
         }
       }
@@ -163,7 +169,7 @@ export class Level {
     }
 
     this.entities.forEach((entity) =>
-      entity.render(map2d, this.tileImage, xOffset, yOffset),
+      entity.render(this, map2d, xOffset, yOffset),
     );
 
     this.onTopTiles.forEach((tile) => {
@@ -261,6 +267,28 @@ export class Level {
         }
       }
     }
+  }
+
+  public renderEntity(
+    map2d: CanvasRenderingContext2D,
+    sx: number,
+    sy: number,
+    x: number,
+    y: number,
+    xOffset: number,
+    yOffset: number,
+  ): void {
+    map2d.drawImage(
+      this.tileImage,
+      sx,
+      sy,
+      this.tileSize,
+      this.tileSize,
+      x * this.tileSize + xOffset,
+      y * this.tileSize + yOffset,
+      this.tileSize,
+      this.tileSize,
+    );
   }
 
   public renderTile(
