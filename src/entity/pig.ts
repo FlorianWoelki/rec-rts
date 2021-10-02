@@ -17,11 +17,6 @@ export class Pig extends Entity {
   private maxDeadAnimationTx: number = 14;
   private deadAnimation: number = 0;
 
-  constructor(x: number, y: number) {
-    super(x, y);
-    this.isPlayingDeadAnimation = true;
-  }
-
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,
@@ -32,7 +27,7 @@ export class Pig extends Entity {
       level.renderEntity(
         map2d,
         this.deadAnimationTx * 8,
-        this.ty * 8,
+        this.dirX === 1 ? (this.ty + 2) * 8 : this.ty * 8,
         this.x,
         this.y,
         xOffset,
@@ -52,6 +47,10 @@ export class Pig extends Entity {
   }
 
   public update(level: Level) {
+    if (Math.round(Math.random() * 100) === 0) {
+      this.isPlayingDeadAnimation = true;
+    }
+
     if (this.isPlayingDeadAnimation) {
       this.playDeadAnimation();
       return;
