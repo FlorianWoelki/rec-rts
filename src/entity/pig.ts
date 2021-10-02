@@ -13,24 +13,50 @@ export class Pig extends Entity {
   private animation: number = 0;
   private movingAnimation: number = 0;
 
+  private deadAnimationTx: number = 8;
+  private maxDeadAnimationTx: number = 14;
+  private deadAnimation: number = 0;
+
+  constructor(x: number, y: number) {
+    super(x, y);
+    this.isPlayingDeadAnimation = true;
+  }
+
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,
     xOffset: number,
     yOffset: number,
   ): void {
-    level.renderEntity(
-      map2d,
-      this.moving ? this.movingTx * 8 : this.tx * 8,
-      this.xa === -1 || this.dirX === 1 ? (this.ty + 2) * 8 : this.ty * 8,
-      this.x,
-      this.y,
-      xOffset,
-      yOffset,
-    );
+    if (this.isPlayingDeadAnimation || this.isDead) {
+      level.renderEntity(
+        map2d,
+        this.deadAnimationTx * 8,
+        this.ty * 8,
+        this.x,
+        this.y,
+        xOffset,
+        yOffset,
+      );
+    } else {
+      level.renderEntity(
+        map2d,
+        this.moving ? this.movingTx * 8 : this.tx * 8,
+        this.xa === -1 || this.dirX === 1 ? (this.ty + 2) * 8 : this.ty * 8,
+        this.x,
+        this.y,
+        xOffset,
+        yOffset,
+      );
+    }
   }
 
   public update(level: Level) {
+    if (this.isPlayingDeadAnimation) {
+      this.playDeadAnimation();
+      return;
+    }
+
     if (this.xa === 1 || this.ya === 1) {
       this.moving = true;
       this.dirX = 0;
@@ -67,6 +93,20 @@ export class Pig extends Entity {
       this.movingTx += 2;
       if (this.movingTx % this.maxMovingTx === 0) {
         this.movingTx = 4;
+      }
+    }
+  }
+
+  private playDeadAnimation(): void {
+    if (this.isDead) return;
+
+    this.deadAnimation += 1;
+
+    if (this.deadAnimation % 2 === 0) {
+      this.deadAnimation = 0;
+      this.deadAnimationTx += 2;
+      if (this.deadAnimationTx === this.maxDeadAnimationTx) {
+        this.isDead = true;
       }
     }
   }

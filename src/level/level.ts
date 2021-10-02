@@ -95,12 +95,8 @@ export class Level {
       for (let x = 0; x < this.width; x++) {
         const tileId = this.tiles[x + y * this.width];
         if (tileId === Tiles.startingPosition.id) {
-          for (let i = 0; i < 5; i++) {
-            this.entities.push(
-              Math.round(Math.random() * 1) === 0
-                ? new Human(x, y)
-                : new Pig(x, y),
-            );
+          for (let i = 0; i < 1; i++) {
+            this.entities.push(new Pig(x, y));
           }
         }
       }
@@ -119,7 +115,9 @@ export class Level {
       this.getTile(xt, yt).update(this, xt, yt);
     }
 
-    this.entities.forEach((entity) => entity.update(this));
+    this.entities
+      .filter((entity) => !entity.isDead)
+      .forEach((entity) => entity.update(this));
   }
 
   public render(

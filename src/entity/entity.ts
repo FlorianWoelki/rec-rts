@@ -8,6 +8,9 @@ export abstract class Entity {
   protected ya: number = 0;
   protected dirX: number = 0;
 
+  public isDead: boolean = false;
+  protected isPlayingDeadAnimation: boolean = false;
+
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
