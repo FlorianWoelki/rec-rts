@@ -17,13 +17,28 @@ export class Human extends Entity {
   private maxDeadAnimationTx: number = 14;
   private deadAnimation: number = 0;
 
+  private isPunching: boolean = false;
+  private punchTx: number = 16;
+  private maxPunchAnimationTx: number = 22;
+  private punchAnimation: number = 0;
+
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,
     xOffset: number,
     yOffset: number,
   ): void {
-    if (this.isPlayingDeadAnimation || this.isDead) {
+    if (this.isPunching) {
+      level.renderEntity(
+        map2d,
+        this.punchTx * 8,
+        this.dirX === 1 ? (this.ty + 2) * 8 : this.ty * 8,
+        this.x,
+        this.y,
+        xOffset,
+        yOffset,
+      );
+    } else if (this.isPlayingDeadAnimation || this.isDead) {
       level.renderEntity(
         map2d,
         this.deadAnimationTx * 8,
@@ -47,6 +62,23 @@ export class Human extends Entity {
   }
 
   public update(level: Level): void {
+    if (this.isPunching) {
+      this.punchAnimation += 1;
+      if (this.punchAnimation % 2 === 0) {
+        this.punchAnimation = 0;
+        this.punchTx += 2;
+        if (this.punchTx === this.maxPunchAnimationTx) {
+          this.punchTx = 16;
+          this.isPunching = false;
+        }
+      }
+      return;
+    }
+
+    if (Math.round(Math.random() * 20) === 0) {
+      this.isPunching = true;
+    }
+
     if (Math.round(Math.random() * 100) === 0) {
       this.isPlayingDeadAnimation = true;
     }
