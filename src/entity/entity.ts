@@ -11,12 +11,14 @@ export abstract class Entity {
   protected x: number;
   protected y: number;
 
-  protected xa: number = 0;
-  protected ya: number = 0;
+  public xa: number = 0;
+  public ya: number = 0;
   protected dirX: number = 0;
 
   public isDead: boolean = false;
   protected isPlayingDeadAnimation: boolean = false;
+
+  public isControlled = false;
 
   constructor(id: number, x: number, y: number) {
     this.id = id;
@@ -68,29 +70,14 @@ export abstract class Entity {
   }
 
   public move2(level: Level, xa: number, ya: number): boolean {
-    const xr = 0;
-    const yr = 0;
-
-    const xto0 = this.x - xr;
-    const yto0 = this.y - yr;
-    const xto1 = this.x + xr;
-    const yto1 = this.y + yr;
-
-    const xt0 = this.x + xa - xr;
-    const yt0 = this.y + ya - yr;
-    const xt1 = this.x + xa + xr;
-    const yt1 = this.y + ya + yr;
-    let blocked = false;
-    for (let yt = yt0; yt <= yt1; yt++) {
-      for (let xt = xt0; xt <= xt1; xt++) {
-        if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) continue;
-        if (!level.getTile(Math.round(xt), Math.round(yt)).isPassable) {
-          blocked = true;
-          return false;
-        }
-      }
+    if (
+      !level.getTile(
+        Math.round((this.x * 16 + 8 * xa) / 16),
+        Math.round((this.y * 16 + 8 * ya) / 16),
+      ).isPassable
+    ) {
+      return false;
     }
-    if (blocked) return false;
 
     this.x += xa / 16;
     this.y += ya / 16;

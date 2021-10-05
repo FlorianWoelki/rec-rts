@@ -95,9 +95,11 @@ export class Human extends Entity {
     }
 
     if (this.move(level)) {
-      if (Math.floor(Math.random() * 20) === 0) {
-        this.xa = Math.floor(Math.random() * 3) - 1;
-        this.ya = Math.floor(Math.random() * 3) - 1;
+      if (!this.isControlled) {
+        if (Math.floor(Math.random() * 20) === 0) {
+          this.xa = Math.floor(Math.random() * 3) - 1;
+          this.ya = Math.floor(Math.random() * 3) - 1;
+        }
       }
     } else {
       this.xa = 0;

@@ -206,7 +206,7 @@ const gameLoop = (): void => {
     () => {},
     () => {
       if (selectedX && selectedY) {
-        for (let i = 0; i < 1; i++)
+        for (let i = 0; i < 5; i++)
           level.entities.push(new Troll(selectedX, selectedY));
 
         level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
