@@ -30,24 +30,48 @@ export class Tree extends Tile {
     const dl = level.getTile(x - 1, y + 1).id === this.id;
     const dr = level.getTile(x + 1, y + 1).id === this.id;
 
-    if (u && ul && l) {
-      level.renderTile(map2d, sx + 2 * 8, sy, x, y, xOffset, yOffset);
-    } else {
-      level.renderTile(map2d, sx, sy, x, y, xOffset, yOffset);
+    if (!level.onTopTiles.find((tile) => tile.x === x && tile.y === y)) {
+      if (u && ul && l) {
+        level.onTopTiles.push({
+          sx: sx + 2 * 8,
+          sy,
+          x,
+          y,
+          xExtraOffset: 0,
+          yExtraOffset: 0,
+        });
+      } else {
+        level.onTopTiles.push({
+          sx,
+          sy,
+          x,
+          y,
+          xExtraOffset: 0,
+          yExtraOffset: 0,
+        });
+      }
+
+      if (u && ur && r) {
+        level.onTopTiles.push({
+          sx: sx + 2 * 8,
+          sy: sy + 1 * 8,
+          x,
+          y,
+          xExtraOffset: 8,
+          yExtraOffset: 0,
+        });
+      } else {
+        level.onTopTiles.push({
+          sx: sx + 1 * 8,
+          sy,
+          x,
+          y,
+          xExtraOffset: 8,
+          yExtraOffset: 0,
+        });
+      }
     }
-    if (u && ur && r) {
-      level.renderTile(
-        map2d,
-        sx + 2 * 8,
-        sy + 1 * 8,
-        x,
-        y,
-        xOffset + 8,
-        yOffset,
-      );
-    } else {
-      level.renderTile(map2d, sx + 1 * 8, sy, x, y, xOffset + 8, yOffset);
-    }
+
     if (d && dl && l) {
       level.renderTile(
         map2d,
@@ -75,19 +99,8 @@ export class Tree extends Tile {
       );
     }
 
-    /*if (!level.onTopTiles.find((tile) => tile.x === x && tile.y === y)) {
-      level.onTopTiles.push({ sx, sy, x, y, xExtraOffset: 0, yExtraOffset: 0 });
-      level.onTopTiles.push({
-        sx: sx + 8,
-        sy,
-        x,
-        y,
-        xExtraOffset: 8,
-        yExtraOffset: 0,
-      });
-    }*/
-    //level.renderTile(map2d, sx, sy + 8, x, y, xOffset, yOffset + 8);
-    //level.renderTile(map2d, sx + 8, sy + 8, x, y, xOffset + 8, yOffset + 8);
+    if (!level.onTopTiles.find((tile) => tile.x === x && tile.y === y)) {
+    }
   }
 
   public getOutcome(): TileOutcome {

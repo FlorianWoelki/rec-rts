@@ -68,13 +68,13 @@ export class Troll extends Entity {
   }
 
   private findHuman(level: Level): void {
-    const radius = 2;
+    const radius = 10;
     const humans = level.entities.filter((e) => e.getID() === EntityID.human);
     const humansInRange: Entity[] = [];
     for (let yy = this.y - radius; yy < this.y + radius; yy++) {
       for (let xx = this.x - radius; xx < this.x + radius; xx++) {
         humans.forEach((h) => {
-          if (h.getX() === xx && h.getX() === xx) {
+          if (h.getX() === xx && h.getY() === yy) {
             humansInRange.push(h);
           }
         });
