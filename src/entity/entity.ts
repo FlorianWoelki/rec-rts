@@ -1,6 +1,13 @@
 import { Level } from '../level/level';
 
+export const EntityID = {
+  human: 0,
+  pig: 1,
+  troll: 2,
+};
+
 export abstract class Entity {
+  protected id: number;
   protected x: number;
   protected y: number;
 
@@ -11,7 +18,8 @@ export abstract class Entity {
   public isDead: boolean = false;
   protected isPlayingDeadAnimation: boolean = false;
 
-  constructor(x: number, y: number) {
+  constructor(id: number, x: number, y: number) {
+    this.id = id;
     this.x = x;
     this.y = y;
   }
@@ -87,5 +95,17 @@ export abstract class Entity {
     this.x += xa / 16;
     this.y += ya / 16;
     return true;
+  }
+
+  public getID(): number {
+    return this.id;
+  }
+
+  public getX(): number {
+    return this.x;
+  }
+
+  public getY(): number {
+    return this.y;
   }
 }

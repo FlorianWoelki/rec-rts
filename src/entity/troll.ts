@@ -1,5 +1,5 @@
 import { Level } from '../level/level';
-import { Entity } from './entity';
+import { Entity, EntityID } from './entity';
 
 export class Troll extends Entity {
   private tx: number = 0;
@@ -21,6 +21,12 @@ export class Troll extends Entity {
   private punchTx: number = 16;
   private maxPunchAnimationTx: number = 22;
   private punchAnimation: number = 0;
+
+  private target?: Entity;
+
+  constructor(x: number, y: number) {
+    super(EntityID.troll, x, y);
+  }
 
   public render(
     level: Level,
@@ -61,7 +67,28 @@ export class Troll extends Entity {
     }
   }
 
+  private findHuman(level: Level): void {
+    const radius = 2;
+    const humans = level.entities.filter((e) => e.getID() === EntityID.human);
+    const humansInRange: Entity[] = [];
+    for (let yy = this.y - radius; yy < this.y + radius; yy++) {
+      for (let xx = this.x - radius; xx < this.x + radius; xx++) {
+        humans.forEach((h) => {
+          if (h.getX() === xx && h.getX() === xx) {
+            humansInRange.push(h);
+          }
+        });
+      }
+    }
+
+    if (humansInRange[0]) {
+      this.target = humansInRange[0];
+    }
+  }
+
   public update(level: Level): void {
+    this.findHuman(level);
+
     if (this.isPunching) {
       this.punchAnimation += 1;
       if (this.punchAnimation % 2 === 0) {
@@ -73,14 +100,6 @@ export class Troll extends Entity {
         }
       }
       return;
-    }
-
-    if (Math.round(Math.random() * 20) === 0) {
-      this.isPunching = true;
-    }
-
-    if (Math.round(Math.random() * 100) === 0) {
-      this.isPlayingDeadAnimation = true;
     }
 
     if (this.isPlayingDeadAnimation) {
@@ -99,7 +118,18 @@ export class Troll extends Entity {
     }
 
     if (this.move(level)) {
-      if (Math.floor(Math.random() * 20) === 0) {
+      if (this.target) {
+        const xd = this.target.getX() - this.x;
+        const yd = this.target.getY() - this.y;
+        if (xd * xd + yd * yd < 50 * 50) {
+          this.xa = 0;
+          this.ya = 0;
+          if (xd < 0) this.xa = -1;
+          if (xd > 0) this.xa = 1;
+          if (yd < 0) this.ya = -1;
+          if (yd > 0) this.ya = 1;
+        }
+      } else if (Math.floor(Math.random() * 20) === 0) {
         this.xa = Math.floor(Math.random() * 3) - 1;
         this.ya = Math.floor(Math.random() * 3) - 1;
       }

@@ -1,5 +1,5 @@
 import { Level } from '../level/level';
-import { Entity } from './entity';
+import { Entity, EntityID } from './entity';
 
 export class Human extends Entity {
   private tx: number = 0;
@@ -21,6 +21,10 @@ export class Human extends Entity {
   private punchTx: number = 16;
   private maxPunchAnimationTx: number = 22;
   private punchAnimation: number = 0;
+
+  constructor(x: number, y: number) {
+    super(EntityID.human, x, y);
+  }
 
   public render(
     level: Level,
@@ -73,14 +77,6 @@ export class Human extends Entity {
         }
       }
       return;
-    }
-
-    if (Math.round(Math.random() * 20) === 0) {
-      this.isPunching = true;
-    }
-
-    if (Math.round(Math.random() * 100) === 0) {
-      this.isPlayingDeadAnimation = true;
     }
 
     if (this.isPlayingDeadAnimation) {

@@ -1,5 +1,5 @@
 import { Level } from '../level/level';
-import { Entity } from './entity';
+import { Entity, EntityID } from './entity';
 
 export class Pig extends Entity {
   private tx: number = 0;
@@ -16,6 +16,10 @@ export class Pig extends Entity {
   private deadAnimationTx: number = 8;
   private maxDeadAnimationTx: number = 14;
   private deadAnimation: number = 0;
+
+  constructor(x: number, y: number) {
+    super(EntityID.pig, x, y);
+  }
 
   public render(
     level: Level,

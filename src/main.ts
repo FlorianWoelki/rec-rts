@@ -4,7 +4,6 @@ import { Keyboard } from './keyboard';
 import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
 import { Minimap } from './minimap';
-import { Pig } from './entity/pig';
 import { Troll } from './entity/troll';
 
 let pageLoaded = false;
@@ -207,12 +206,8 @@ const gameLoop = (): void => {
     () => {},
     () => {
       if (selectedX && selectedY) {
-        for (let i = 0; i < 5; i++)
-          level.entities.push(
-            Math.round(Math.random() * 1) === 0
-              ? new Troll(selectedX, selectedY)
-              : new Pig(selectedX, selectedY),
-          );
+        for (let i = 0; i < 1; i++)
+          level.entities.push(new Troll(selectedX, selectedY));
 
         level.setTileState(selectedX, selectedY, 1, TileStateMask.OWNED);
         level.recalcVisibility();
