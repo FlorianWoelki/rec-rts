@@ -5,6 +5,7 @@ import { TileStateMask, Level, Tiles } from './level/level';
 import { TileOutcomeType } from './level/tile/tile';
 import { Minimap } from './minimap';
 import { Troll } from './entity/troll';
+import { EntityID } from './entity/entity';
 
 let pageLoaded = false;
 let initialized = false;
@@ -89,6 +90,16 @@ const init = (): void => {
       const xTile = Math.floor((event.clientX / zoom - xOffset) / tileSize);
       const yTile = Math.floor((event.clientY / zoom - yOffset) / tileSize);
       clickTile(xTile, yTile, event.clientX / zoom, event.clientY / zoom);
+
+      level.entities.forEach((e) => {
+        if (
+          xTile === Math.round(e.getX()) &&
+          yTile === Math.round(e.getY()) &&
+          e.getID() === EntityID.human
+        ) {
+          e.isControlled = true;
+        }
+      });
     }
   };
 
@@ -214,6 +225,13 @@ const gameLoop = (): void => {
 
         selectedX = null;
         selectedY = null;
+      }
+    },
+    (xa: number, ya: number) => {
+      const e = level.entities.find((e) => e.isControlled);
+      if (e) {
+        e.xa = xa;
+        e.ya = ya;
       }
     },
   );
