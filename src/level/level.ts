@@ -45,6 +45,8 @@ export interface OnTopTile {
   y: number;
   xExtraOffset: number;
   yExtraOffset: number;
+  dw?: number;
+  dh?: number;
 }
 
 export class Level {
@@ -187,6 +189,8 @@ export class Level {
         tile.y,
         tile.xExtraOffset + xOffset,
         tile.yExtraOffset + yOffset,
+        tile.dw,
+        tile.dh,
       );
     });
 
