@@ -2,6 +2,7 @@ import spritesheet from '../../assets/spritesheet.png';
 import { Entity } from '../entity/entity';
 import { Human } from '../entity/human';
 import { Pig } from '../entity/pig';
+import { Tent } from './buildings/Tent';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
 import { Dirt } from './tile/dirt';
@@ -12,6 +13,10 @@ import { Sand } from './tile/sand';
 import { Tile } from './tile/tile';
 import { Tree } from './tile/tree';
 import { Water } from './tile/water';
+
+export const Buildings = {
+  tent: new Tent(0),
+};
 
 export const Tiles = {
   water: new Water(0),
@@ -139,7 +144,6 @@ export class Level {
     for (let y = y0; y < y1; y++) {
       for (let x = x0; x < x1; x++) {
         const tile = this.getTile(x, y);
-        const tileState = this.getTileState(x, y, TileStateMask.OWNED);
         if (tile.isOnGrass) {
           const grassTile = tilesIdArray.find(
             (tile) => tile.id === Tiles.grass.id,
@@ -153,19 +157,14 @@ export class Level {
         }
 
         tile.render(this, map2d, x, y, xOffset, yOffset);
+      }
+    }
 
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < x1; x++) {
+        const tileState = this.getTileState(x, y, TileStateMask.OWNED);
         if (tileState === 1) {
-          map2d.drawImage(
-            this.tileImage,
-            0 * 8,
-            9 * 8,
-            16,
-            16,
-            x * this.tileSize + xOffset,
-            y * this.tileSize + yOffset,
-            16,
-            16,
-          );
+          Buildings.tent.render(this, map2d, x, y, xOffset, yOffset);
         }
       }
     }
@@ -301,6 +300,8 @@ export class Level {
     y: number,
     xOffset: number,
     yOffset: number,
+    dw: number = 8,
+    dh: number = 8,
   ): void {
     map2d.drawImage(
       this.tileImage,
@@ -310,8 +311,8 @@ export class Level {
       8,
       x * this.tileSize + xOffset,
       y * this.tileSize + yOffset,
-      8,
-      8,
+      dw,
+      dh,
     );
   }
 
@@ -343,7 +344,24 @@ export class Level {
       this.tilesState[x + y * this.width] = (data << 1) | (oldData & 1);
     } else {
       this.tilesState[x + y * this.width] ^= data;
-      this.tiles[x + y * this.width] = Tiles.dirt.id;
+      this.placeDirtUnderBuilding(x, y);
+    }
+  }
+
+  public placeDirtUnderBuilding(x: number, y: number): void {
+    for (let yy = 0; yy < 2; yy++) {
+      for (let xx = -1; xx < 2; xx++) {
+        const nx = x + xx;
+        const ny = y - yy;
+        this.tiles[nx + ny * this.width] = Tiles.dirt.id;
+
+        for (let i = 0; i < 2; i++) {
+          const topTileIndex = this.onTopTiles.findIndex(
+            (tile) => tile.x === nx && tile.y === ny,
+          );
+          if (topTileIndex > -1) this.onTopTiles.splice(topTileIndex, 1);
+        }
+      }
     }
   }
 
