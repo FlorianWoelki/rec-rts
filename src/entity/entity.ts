@@ -79,6 +79,15 @@ export abstract class Entity {
       return false;
     }
 
+    if (
+      level.getBuilding(
+        Math.round((this.x * 16 + 8 * xa) / 16),
+        Math.round((this.y * 16 + 8 * ya) / 16),
+      )
+    ) {
+      return false;
+    }
+
     this.x += xa / 16;
     this.y += ya / 16;
     return true;

@@ -2,6 +2,7 @@ import spritesheet from '../../assets/spritesheet.png';
 import { Entity } from '../entity/entity';
 import { Human } from '../entity/human';
 import { Pig } from '../entity/pig';
+import { Building } from './buildings/Building';
 import { Tent } from './buildings/Tent';
 import { createAndValidateWorld } from './generator/level-generator';
 import { Cactus } from './tile/cactus';
@@ -52,6 +53,8 @@ export class Level {
   public tilesState: number[];
   public tileSize: number = 16;
 
+  public isBuilding: number[];
+
   public tickCount: number = 0;
 
   public tileImage: HTMLImageElement;
@@ -71,6 +74,7 @@ export class Level {
     this.tiles = new Array(width * height);
     this.data = new Array(width * height);
     this.tilesState = new Array(width * height);
+    this.isBuilding = new Array(width * height);
 
     this.tileImage = this.loadImage(spritesheet);
   }
@@ -95,6 +99,7 @@ export class Level {
     this.tilesState = [...map[1]];
     this.data = [...map[1]];
     this.tilesState.fill(0);
+    this.isBuilding.fill(0);
 
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -325,6 +330,17 @@ export class Level {
     return foundTile ?? Tiles.water;
   }
 
+  public getBuilding(x: number, y: number): Building | undefined {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return undefined;
+
+    const isBuilding = this.isBuilding[x + y * this.width];
+    if (isBuilding) {
+      return Buildings.tent;
+    }
+
+    return undefined;
+  }
+
   public getTileState(x: number, y: number, mask: TileStateMask): number {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return 0;
     if (mask === TileStateMask.VISIBLE)
@@ -345,6 +361,15 @@ export class Level {
     } else {
       this.tilesState[x + y * this.width] ^= data;
       this.placeDirtUnderBuilding(x, y);
+
+      // set building
+      for (let yy = 0; yy < 2; yy++) {
+        for (let xx = -1; xx < 2; xx++) {
+          const nx = x + xx;
+          const ny = y - yy;
+          this.isBuilding[nx + ny * this.width] = 1;
+        }
+      }
     }
   }
 
