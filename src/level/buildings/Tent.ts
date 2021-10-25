@@ -1,12 +1,7 @@
 import { Level } from '../level';
+import { Building } from './Building';
 
-export class Tent {
-  private id: number;
-
-  constructor(id: number) {
-    this.id = id;
-  }
-
+export class Tent extends Building {
   public render(
     level: Level,
     map2d: CanvasRenderingContext2D,
