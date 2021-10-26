@@ -98,9 +98,6 @@ export class Tree extends Tile {
         yOffset + 8,
       );
     }
-
-    if (!level.onTopTiles.find((tile) => tile.x === x && tile.y === y)) {
-    }
   }
 
   public getOutcome(): TileOutcome {

@@ -377,6 +377,11 @@ export class Level {
 
         if (this.isBuilding[i]) {
           this.isBuilding[i] = 0;
+
+          const topTileIndex = this.onTopTiles.findIndex(
+            (tile) => tile.x === nx - 0.75 && tile.y === ny - 1,
+          );
+          if (topTileIndex > -1) this.onTopTiles.splice(topTileIndex, 5 * 2); // amount of to remove tiles from tent
         } else {
           this.tiles[i] = Tiles.dirt.id;
           this.isBuilding[i] = 1;
