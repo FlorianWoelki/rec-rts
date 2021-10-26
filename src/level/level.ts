@@ -369,20 +369,23 @@ export class Level {
   }
 
   public setBuilding(x: number, y: number): void {
-    for (let yy = 0; yy < 2; yy++) {
+    for (let yy = 0; yy < 1; yy++) {
       for (let xx = -1; xx < 2; xx++) {
         const nx = x + xx;
         const ny = y - yy;
         const i = nx + ny * this.width;
-        this.tiles[i] = Tiles.dirt.id;
-        this.isBuilding[i] = this.isBuilding[i] ? 0 : 1;
-        console.log(this.isBuilding[i]);
 
-        for (let i = 0; i < 2; i++) {
-          const topTileIndex = this.onTopTiles.findIndex(
-            (tile) => tile.x === nx && tile.y === ny,
-          );
-          if (topTileIndex > -1) this.onTopTiles.splice(topTileIndex, 1);
+        if (this.isBuilding[i]) {
+          this.isBuilding[i] = 0;
+        } else {
+          this.tiles[i] = Tiles.dirt.id;
+          this.isBuilding[i] = 1;
+          for (let i = 0; i < 2; i++) {
+            const topTileIndex = this.onTopTiles.findIndex(
+              (tile) => tile.x === nx && tile.y === ny,
+            );
+            if (topTileIndex > -1) this.onTopTiles.splice(topTileIndex, 1);
+          }
         }
       }
     }

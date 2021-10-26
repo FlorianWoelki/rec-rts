@@ -79,13 +79,15 @@ export abstract class Entity {
       return false;
     }
 
-    if (
-      level.getBuilding(
-        Math.round((this.x * 16 + 8 * xa) / 16),
-        Math.round((this.y * 16 + 8 * ya) / 16),
-      )
-    ) {
-      return false;
+    for (let x = -1; x < 2; x++) {
+      if (
+        level.getBuilding(
+          Math.round((this.x * 16 + 8 * xa) / 16),
+          Math.round((this.y * 16 + 8 * ya) / 16),
+        )
+      ) {
+        return false;
+      }
     }
 
     this.x += xa / 16;
