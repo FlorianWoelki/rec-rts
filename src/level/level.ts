@@ -364,25 +364,19 @@ export class Level {
       this.tilesState[x + y * this.width] = (data << 1) | (oldData & 1);
     } else {
       this.tilesState[x + y * this.width] ^= data;
-      this.placeDirtUnderBuilding(x, y);
-
-      // set building
-      for (let yy = 0; yy < 2; yy++) {
-        for (let xx = -1; xx < 2; xx++) {
-          const nx = x + xx;
-          const ny = y - yy;
-          this.isBuilding[nx + ny * this.width] = 1;
-        }
-      }
+      this.setBuilding(x, y);
     }
   }
 
-  public placeDirtUnderBuilding(x: number, y: number): void {
+  public setBuilding(x: number, y: number): void {
     for (let yy = 0; yy < 2; yy++) {
       for (let xx = -1; xx < 2; xx++) {
         const nx = x + xx;
         const ny = y - yy;
-        this.tiles[nx + ny * this.width] = Tiles.dirt.id;
+        const i = nx + ny * this.width;
+        this.tiles[i] = Tiles.dirt.id;
+        this.isBuilding[i] = this.isBuilding[i] ? 0 : 1;
+        console.log(this.isBuilding[i]);
 
         for (let i = 0; i < 2; i++) {
           const topTileIndex = this.onTopTiles.findIndex(
